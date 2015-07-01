@@ -85,8 +85,8 @@ function parseSpreadsheetData_Second(response) {
     var new24 = rows[4].c[2].v;
     var p8 = rows[5].c[2].v;
 
-    $('#updated-text').text(formatUpdated(updatedDate));
-    $('#updated-text-2').text(formatElapsed(updatedDate));
+    $('#updated-text').html(formatUpdated(updatedDate));
+    $('#updated-text-2').html(formatElapsed(updatedDate));
     $('#wax-text').text(formatWax(wax));
     $('#snow-text').text(snow + ' C');
     $('#p8-text').text(p8);
