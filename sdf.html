@@ -1,0 +1,231 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+<title>Les conditions</title>
+
+<meta name="viewport" content="user-scalable=no, width=device-width" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+<link rel="apple-touch-icon" href="img/icon-114x114.png" sizes="57x57" />
+<link rel="apple-touch-icon" href="img/icon-114x114.png" sizes="114x114" />
+<link rel="apple-touch-icon" href="img/icon-144x144.png" sizes="72x72" />
+<link rel="apple-touch-icon" href="img/icon-144x144.png" sizes="144x144" />
+
+<link rel="apple-touch-startup-image" media="(device-width: 320px)" href="img/startup-image-320x460.png" />
+<link rel="apple-touch-startup-image" media="(device-width: 320px) and (-webkit-device-pixel-ratio: 2)" href="img/startup-image-640x920.png" />
+
+<link rel="stylesheet" href="css/reset.css" />
+<link rel="stylesheet" href="css/sdf.css" />
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="js/soleil.js"></script>
+
+<script type="text/javascript">
+var google = {};
+google.visualization = {};
+google.visualization.Query = {};
+
+var month_names = [ 'janvier', 'f&eacute;vrier', 'mars', 'avril', 'mai', 'juin', 'juillet', 'ao&ocirc;t', 'septembre', 'octobre', 'novembre', 'd&eacute;cembre' ];
+var periodes = [ '', 'Ce soir', 'Cette nuit', 'Ce matin', 'Cet apr&egrave;s-midi' ];
+var updatedDate;
+
+$(document).ready(function() {
+    google.visualization.Query.setResponse = parseSpreadsheetData_First;
+    var url = "https://spreadsheets.google.com/tq?key=0AqeNjAYIAcUedGl0SWVZZzNtQ0JNTVFuR1dRQ3psMlE&pub=1&gid=6";
+    var script = document.createElement("script");        
+    script.setAttribute("src", url);
+    script.setAttribute("type", "text/javascript");                
+    document.body.appendChild(script);
+  
+    var url2 = "http://www.meteomedia.com/dataaccess/citypage/json/caqc0177?callback=parseCitypageData&t=" + new Date().getTime();
+    var script2 = document.createElement("script");        
+    script2.setAttribute("src", url2);
+    script2.setAttribute("type", "text/javascript");                
+    document.body.appendChild(script2);
+
+    $('.scrollable').each(function () {
+        $(this).children('.box').height($(this).height()).width($(this).width());
+    });
+
+    $('.box').click(function () {
+        var width = $(this).css('width');
+        $(this).animate({ left: '-' + width }, 250);
+        var next = $(this).next();
+        if (next.length == 0) { next = $(this).siblings(':first'); }
+        next.css('left', width);
+        next.animate({ left: '0px' }, 250);
+    });
+
+    var timezone = new Date().getTimezoneOffset() / 60;
+    var sun = computeSunrise(new Date(), 45.5, 75.5);
+    $('#coucher-text').text(formatSunTime(sun.sunsetGMT - timezone));
+    $('#lever-text').text(formatSunTime(sun.sunriseGMT - timezone));
+    $('#semaine-text').text(formatSunDelta(sun.semaine));
+});
+
+function parseSpreadsheetData_First(response) {
+    updatedDate = response.table.rows[0].c[1].v;
+
+    google.visualization.Query.setResponse = parseSpreadsheetData_Second;
+    var url = "https://spreadsheets.google.com/tq?key=0AqeNjAYIAcUedGl0SWVZZzNtQ0JNTVFuR1dRQ3psMlE&pub=1&gid=4";
+    var script = document.createElement("script");        
+    script.setAttribute("src", url);
+    script.setAttribute("type", "text/javascript");                
+    document.body.appendChild(script);
+}
+
+function parseSpreadsheetData_Second(response) {
+    var cols = response.table.cols;
+    var rows = response.table.rows;
+    var updatedTime = rows[7].c[2].v;
+    var snow = cols[2].label;
+    var wax = rows[3].c[2].v;
+    var new24 = rows[4].c[2].v;
+    var p8 = rows[5].c[2].v;
+
+    $('#updated-text').text(formatUpdated(updatedDate));
+    $('#updated-text-2').text(formatElapsed(updatedDate));
+    $('#wax-text').text(formatWax(wax));
+    $('#snow-text').text(snow + ' C');
+    $('#p8-text').text(p8);
+    $('#new24-text').text(new24);
+}
+
+function parseCitypageData(response) {
+    $('#obs-text').html(response.PACKAGE.Observation.temperature_c + ' C<br/><br/>(' + response.PACKAGE.Observation.feelsLike_c + 'C)');
+    var pa = response.PACKAGE.ShortTerm.Period[0];
+    $('#forecast-a-text').html(
+        periodes[pa.period] + '<br/><br/>' +
+        pa.temperature_c + ' C (' + pa.feelsLike_c + 'C)<br/><br/>' +
+        pa.pop_percent + '%<br/>' +
+        (pa.rain > 0 ? pa.rain_range + ' mm pluie' : '') + (pa.rain > 0 && pa.snow > 0 ? ', ' : '') + (pa.snow > 0 ? pa.snow_range + ' cm neige' : '')
+    );
+    pa = response.PACKAGE.ShortTerm.Period[1];
+    $('#forecast-b-text').html(
+        periodes[pa.period] + '<br/><br/>' +
+        pa.temperature_c + ' C (' + pa.feelsLike_c + 'C)<br/><br/>' +
+        pa.pop_percent + '%<br/>' +
+        (pa.rain > 0 ? pa.rain_range + ' mm pluie' : '') + (pa.rain > 0 && pa.snow > 0 ? ', ' : '') + (pa.snow > 0 ? pa.snow_range + ' cm neige' : '')
+    );
+}
+
+function formatUpdated(updated) {
+    var date = new Date(updated);
+    var yyyy = date.getFullYear();
+    var mo = month_names[date.getMonth()];
+    var dd = date.getDate();
+    var hh = date.getHours();
+    var mm = date.getMinutes();
+    return dd + ' ' + mo + '&agrave; ' + hh + 'h' + (mm < 10 ? '0' : '') + mm;
+}
+
+function formatElapsed(updated) {
+    var diff = new Date().getTime() - new Date(updated).getTime();
+    var days = Math.floor(diff / 1000 / 60 / 60 / 24);
+    diff -= days * 1000 * 60 * 60 * 24;
+    var hours = Math.floor(diff / 1000 / 60 / 60);
+    diff -= hours * 1000 * 60 * 60;
+    var mins = Math.floor(diff / 1000 / 60);
+    diff -= mins * 1000 * 60;
+    return (days > 0 ? days + ' jour' : '') + (days > 1 ? 's' : '') + ' ' +
+        (hours > 0 ? hours + ' heure' : '') + (hours > 1 ? 's' : '') + ' ' +
+        (mins + ' minute') + (mins > 1 ? 's' : '');
+}
+
+function formatSunTime(hour) {
+    var h = Math.floor(hour);
+    var m = Math.floor(60 * (hour - h));
+    return h + 'h' + (m < 10 ? '0' : '') + m;
+}
+
+function formatSunDelta(hour) {
+    var negative = (hour < 0);
+    if (negative) hour = -hour;
+
+    var h = Math.floor(hour);
+    var m = Math.floor(60 * (hour - h));
+    var s = Math.floor(3600 * (hour - h - m / 60));
+    return (negative ? '-' : '+') + m  + ':' +  (s < 10 ? '0' : '') + s;
+}
+
+function formatWax(wax) {
+    var parts = wax.split('/');
+    if (parts.length == 1) return wax.trim();
+    return parts[0].trim();
+}
+
+function BlockMove(event) {
+    event.preventDefault(); //Tell Safari not to move the window
+}
+</script>
+</head>
+<body ontouchmove="BlockMove(event);">
+<div id='content'>
+    <span style="font-size:xx-small;">&nbsp;</span>
+
+    <div id='conditions'>Conditions de ski</div>
+
+    <div id="updated-box" class="scrollable">
+        <div class="box">
+            <div class="label">Derni&egrave;re mise &agrave; jour</div>
+            <div id="updated-text"></div>
+        </div>
+        <div class="box" style="left:999px;">
+            <div class="label">Temps &eacute;coul&eacute; depuis la mise &agrave; jour</div>
+            <div id="updated-text-2"></div>
+        </div>
+    </div>
+
+    <div id="wax-box" class="scrollable">
+        <div class="box">
+            <div class="label">Cire</div>
+            <div id="wax-text"></div>
+        </div>
+        <div class="box" style="left:999px;">
+            <div class="label">Temp&eacute;rature de la neige</div>
+            <div id="snow-text"></div>
+        </div>
+    </div>
+
+    <div id="wx-box" class="scrollable">
+        <div class="box">
+            <div class="label">Observation</div>
+            <div id="obs-text"></div>
+        </div>
+        <div class="box" style="left:999px;">
+            <div class="label">Pr&eacute;visions</div>
+            <div id="forecast-a-text"></div>
+        </div>
+        <div class="box" style="left:999px;">
+            <div class="label">Pr&eacute;visions</div>
+            <div id="forecast-b-text"></div>
+        </div>
+    </div>
+
+    <div id="p8-box" class="scrollable">
+        <div class="box">
+            <div class="label">Base de neige au P8</div>
+            <div id="p8-text"></div>
+        </div>
+        <div class="box" style="left:999px;">
+            <div class="label">Derni&egrave;res 24 heures</div>
+            <div id="new24-text"></div>
+        </div>
+    </div>
+
+    <div id="sun-box" class="scrollable">
+        <div class="box">
+            <div class="label">Le soleil aujourd'hui</div>
+            <div id="lever-text"></div>
+            <div id="coucher-text"></div>
+        </div>
+        <div class="box" style="left:999px;">
+            <div class="label">Ensoleillement cette semaine</div>
+            <div id="semaine-text">+21:58</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
