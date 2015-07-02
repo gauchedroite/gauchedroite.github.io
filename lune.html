@@ -1,0 +1,45 @@
+<!DOCTYPE>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>L'enfant de la lune</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="language" content="fr" />
+	<meta name="description" content="" />
+	<meta name="keywords" content="game,studio,gauche,droite" />
+
+	<link rel="stylesheet" type="text/css" href="css/lune.css" />
+	<script type="text/javascript" src="js/swfobject.js"></script>
+	<script type="text/javascript">
+		var flashvars = {
+		};
+		var params = {
+			menu: "false",
+			scale: "noScale",
+			allowFullscreen: "true",
+			allowScriptAccess: "always",
+			bgcolor: "#0c070e"
+		};
+		var attributes = {
+			id: "lune"
+		};
+		swfobject.embedSWF("bin/Lune.swf", "alt-content", "960", "640", "10.0.0", "bin/expressInstall.swf", flashvars, params, attributes);
+	</script>
+</head>
+<body>
+	<div id="container">
+		<div id="header">
+		</div>
+		<div id="primary">
+		</div>
+		<div id="content">
+			<div id="alt-content" />
+		</div>
+		<div id="secondary">
+		</div>
+		<div id="footer">
+			<p>Studio Gauche-Droite &copy; 2012</p>
+		</div>
+	</div>
+</body>
+</html>
