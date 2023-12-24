@@ -1,42 +1,177 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr-CA">
 <head>
-	<meta charset="utf-8">
-	<title>Studio Gauche-Droite</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
 	<meta name="language" content="fr" />
 	<meta name="description" content="Studio Gauche-Droite" />
-	
-	<link rel="stylesheet" type="text/css" href="css/main.css" />
+    <title>Studio Gauche-Droite</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <style>
+		:root {
+			--bc: sandybrown;
+			--bs: 4px;
+			--bg: steelblue;
+		}
+        html, body, div {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            font-size: 100%;
+            font: inherit;
+            vertical-align: baseline;
+			font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+		.parent {
+			display: grid;
+			grid-template-columns: repeat(8, 1fr);
+			grid-template-rows: repeat(8, 1fr);
+		}
+		.child {
+			grid-row: 6;
+			grid-column: 4 / 6;
+			height: 100%;
+			width: 100%;
+
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			grid-template-rows: repeat(1, 1fr);
+		}
+		.left {
+			grid-row: 1;
+			grid-column: 1 / 2;
+
+			display: grid;
+			align-items: center;
+			justify-items: center;
+
+			border-left: var(--bs) solid var(--bc);
+			border-top: var(--bs) solid var(--bc);
+			border-bottom: var(--bs) solid var(--bc);
+			border-top-left-radius: 8px;
+			border-bottom-left-radius: 8px;
+
+			background-color: color-mix(in srgb, var(--bg), transparent 10%);
+		}
+		.right {
+			grid-row: 1;
+			grid-column: 2 / 4;
+
+			display: grid;
+			align-items: center;
+			justify-items: center;
+
+			text-align: center;
+			font-size: 40px;
+			font-weight: 600;
+			font-style: italic;
+			line-height: 1;
+
+			background-color: color-mix(in srgb, var(--bg), transparent 30%);
+			border-right: var(--bs) solid var(--bc);
+			border-top: var(--bs) solid var(--bc);
+			border-bottom: var(--bs) solid var(--bc);
+			border-top-right-radius: 8px;
+			border-bottom-right-radius: 8px;
+
+			color: var(--bc);
+			text-shadow: 3px 3px 7px darkslateblue;
+		}
+		img {
+			object-fit: cover;
+			width: 80%;
+			max-height: 80%;
+			border: 1px solid var(--bc);
+		}
+    </style>
 </head>
 <body>
-	<div id="container">
-		<div id="header">
-		</div>
-		<div id="primary">
-			<div id="primary-text">
-				<div class="primary-line"><a href="http://blog.gauchedroite.com">Blog du studio</a></div>
-				<div>&nbsp;</div>
-				<div class="primary-line"><a href="http://gauchedroite.github.io/korps.html">Chthonian Korps</a></div>
-				<div>&nbsp;</div>
-				<div class="primary-line"><a href="http://gauchedroite.github.io/lune.html">L'enfant de la Lune</a></div>
-			</div>
-		</div>
-		<div id="content">
-			<div id="logo">
-				<img src="img/studio-gauche-droite_small.jpg" />
-			</div>
-		</div>
-		<div id="secondary">
-			<div id="secondary-text">
-				<div class="secondary-line"><a href="http://ptrepan.blogspot.com/">Blog de Pierre</a></div>
-				<div>&nbsp;</div>
-				<div class="secondary-line"><a href="http://ptrepan.deviantart.com">Pierre sur DeviantArt</a></div>
-			</div>
-		</div>
-		<div id="footer">
-			<p>Studio Gauche-Droite &copy; 2015</p>
+    <canvas id="menu_canvas" style="position:absolute; width:100vw; height:100vh;"></canvas>
+
+	<div class="parent" style="position:absolute; width:100vw; height:100vh;">
+		<div class="child">
+			<div class="left"><img src="assets/geai-bleu-500x500.jpg" alt="Billy"></div>
+			<div class="right">Mon ami<br>Billy</div>
 		</div>
 	</div>
+
+    <script id="vertex_sky" type="x-shader/x-vertex">
+        attribute vec3 a_square;
+        void main() {
+            gl_Position = vec4(a_square, 1.0);
+        }
+    </script>
+    <script id="fragment_sky" type="x-shader/x-fragment">
+        precision mediump float;
+        uniform float time;
+        uniform vec2 resolution;
+
+        mat2 m = mat2( 0.90,  0.110, -0.70,  1.00 );
+
+        float hash( float n ) {
+            return fract(sin(n)*758.5453);
+        }
+
+        float noise( in vec3 x ) {
+            vec3 p = floor(x);
+            vec3 f = fract(x); 
+            float n = p.x + p.y*57.0 + p.z*800.0;
+            float res = mix(mix(mix( hash(n+  0.0), hash(n+  1.0),f.x), mix( hash(n+ 57.0), hash(n+ 58.0),f.x),f.y),
+                    mix(mix( hash(n+800.0), hash(n+801.0),f.x), mix( hash(n+857.0), hash(n+858.0),f.x),f.y),f.z);
+            return res;
+        }
+
+        float fbm( vec3 p ) {
+            float f = 0.0;
+            f += 0.50000*noise( p ); p = p*2.02;
+            f -= 0.25000*noise( p ); p = p*2.03;
+            f += 0.12500*noise( p ); p = p*2.01;
+            f += 0.06250*noise( p ); p = p*2.04;
+            f -= 0.03125*noise( p );
+            return f/0.984375;
+        }
+
+        float cloud(vec3 p) {
+            p -= fbm(vec3(p.x,p.y,0.0)*0.5)*2.25;
+            
+            float a = 0.0;
+            a -= fbm(p*3.0)*2.2-1.1;
+            return a * a;
+        }
+
+        vec3 f2(vec3 c) {
+            c += hash(gl_FragCoord.x+gl_FragCoord.y*9.9)*0.01;
+            c *= 0.7-length(gl_FragCoord.xy / resolution.xy -0.5)*0.7;
+            float w = length(c);
+            c = mix(c*vec3(1.0,1.0,1.6), vec3(w,w,w)*vec3(1.4,1.2,1.0), w*1.1-0.2);
+            return c;
+        }
+
+        void main( void ) {
+            vec2 position = (gl_FragCoord.xy / resolution.xy);
+            position.y += 0.2;
+
+            vec2 coord= vec2((position.x-0.5)/position.y,1.0/(position.y+0.2));
+            coord += time * 0.015;
+
+            float q = cloud(vec3(coord*1.0,0.222));
+
+            vec3 col = vec3(0.2,0.7,0.8) + vec3(q*vec3(0.2,0.4,0.1));
+            gl_FragColor = vec4( f2(col), 1.0 );
+        }
+    </script>
+
+    <script src="webgl-runner.js"></script>
+    <script>
+        // Start the shader
+        setTimeout(() => {
+            let runner = new WebglRunner()
+            const canvas = document.getElementById("menu_canvas")
+            const fragmentShader = document.getElementById("fragment_sky").text
+            const vertexShader = document.getElementById("vertex_sky").text
+            runner.run(canvas, fragmentShader, vertexShader)
+        }, 0);
+    </script>
 </body>
 </html>
