@@ -1,0 +1,14 @@
+{
+    "name": "gauchedroite.github.io",
+    "version": "0.0.0",
+    "description": "Pour Laura!",
+    "author": "GaucheDroite",
+    "license": "MIT",
+    "type": "module",
+    "scripts": {
+        "dev": "tsc -w"
+    },
+    "devDependencies": {
+        "typescript": "^5.3.3"
+    }
+}

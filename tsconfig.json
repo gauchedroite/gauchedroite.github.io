@@ -1,0 +1,34 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+      
+      // Settings for the compiler
+      "outDir": "./js",
+      "sourceMap": true,
+      "target": "es2017",
+      "module": "ESNext",
+
+      // Rules for our code
+      "alwaysStrict": true,
+      "strict": true,
+      "noImplicitAny": true,
+      "noImplicitReturns": true,
+      "noFallthroughCasesInSwitch": true,
+      "noImplicitOverride": true,
+      "noEmitOnError": true,
+      "removeComments": false,
+      //
+      "noUnusedParameters": false,
+      "noUnusedLocals": false,
+
+      // Settings for linking source files
+      "moduleResolution": "Node",
+      "esModuleInterop": true,
+      "resolveJsonModule": true,
+      "allowSyntheticDefaultImports": true,
+      "experimentalDecorators": true
+    },
+    "include": [
+      "./src/**/*"
+    ]
+}
