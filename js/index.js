@@ -154,27 +154,38 @@ class Fake3D {
         this.render();
     }
     gyro() {
-        /*
-            let that = this;
-        
-            this.maxTilt = 15;
-            
-            const rotationCoef = 0.15;
-        
-            gn.init({ gravityNormalized: true }).then(function() {
-              gn.start(function(data) {
-        
-                let y = data.do.gamma;
-                let x = data.do.beta;
-        
-                that.mouseTargetY = clamp(x,-that.maxTilt, that.maxTilt)/that.maxTilt;
-                that.mouseTargetX = -clamp(y,-that.maxTilt, that.maxTilt)/that.maxTilt;
-        
-              });
-            }).catch(function(e) {
-              console.log('not supported');
-            });
-        */
+        const me = this;
+        window.addEventListener('deviceorientation', handleOrientation);
+        function handleOrientation(event) {
+            const alpha = event.alpha;
+            const beta = event.beta;
+            const gamma = event.gamma;
+            const maxTilt = 15;
+            const y = gamma;
+            const x = beta;
+            me.mouseTargetY = clamp(x, -maxTilt, maxTilt) / maxTilt;
+            me.mouseTargetX = -clamp(y, -maxTilt, maxTilt) / maxTilt;
+        }
+        const root = document.getElementById("root");
+        root.addEventListener("click", () => {
+            if (typeof DeviceMotionEvent.requestPermission === 'function') {
+                // Handle iOS 13+ devices.
+                DeviceMotionEvent.requestPermission()
+                    .then((state) => {
+                    if (state === 'granted') {
+                        window.addEventListener('devicemotion', handleOrientation);
+                    }
+                    else {
+                        console.error('Request to access the orientation was rejected');
+                    }
+                })
+                    .catch(console.error);
+            }
+            else {
+                // Handle regular non iOS 13+ devices.
+                window.addEventListener('devicemotion', handleOrientation);
+            }
+        });
     }
     mouseMove() {
         let that = this;

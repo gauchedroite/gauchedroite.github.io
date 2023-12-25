@@ -212,27 +212,43 @@ class Fake3D {
     }
 
     gyro() {
-        /*
-            let that = this;
-        
-            this.maxTilt = 15;
-            
-            const rotationCoef = 0.15;
-        
-            gn.init({ gravityNormalized: true }).then(function() {
-              gn.start(function(data) {
-        
-                let y = data.do.gamma;
-                let x = data.do.beta;
-        
-                that.mouseTargetY = clamp(x,-that.maxTilt, that.maxTilt)/that.maxTilt;
-                that.mouseTargetX = -clamp(y,-that.maxTilt, that.maxTilt)/that.maxTilt;
-        
-              });
-            }).catch(function(e) {
-              console.log('not supported');
-            });
-        */
+        const me = this;
+
+        window.addEventListener('deviceorientation', handleOrientation);
+        function handleOrientation(event: any) {
+            const alpha = event.alpha;
+            const beta = event.beta;
+            const gamma = event.gamma;
+
+            const maxTilt = 15;
+            const y = gamma;
+            const x = beta;
+
+            me.mouseTargetY = clamp(x, -maxTilt, maxTilt) / maxTilt;
+            me.mouseTargetX = -clamp(y, -maxTilt, maxTilt) / maxTilt;
+        }
+
+        const root = document.getElementById("root")!;
+        root.addEventListener("click", () => {
+            if (typeof (DeviceMotionEvent as any).requestPermission === 'function') {
+                // Handle iOS 13+ devices.
+                (DeviceMotionEvent as any).requestPermission()
+                    .then((state: any) => {
+                        if (state === 'granted') {
+                            window.addEventListener('devicemotion', handleOrientation);
+                        }
+                        else {
+                            console.error('Request to access the orientation was rejected');
+                        }
+                    })
+                    .catch(console.error);
+            }
+            else {
+                // Handle regular non iOS 13+ devices.
+                window.addEventListener('devicemotion', handleOrientation);
+            }
+
+        })
     }
 
     mouseMove() {
@@ -250,7 +266,7 @@ class Fake3D {
         let now = new Date().getTime();
         let currentTime = (now - this.startTime) / 1000;
         this.uTime.set(currentTime);
-        
+
         // inertia
         this.mouseX += (this.mouseTargetX - this.mouseX) * 0.05;
         this.mouseY += (this.mouseTargetY - this.mouseY) * 0.05;
@@ -305,7 +321,7 @@ class Uniform {
         this.location = gl.getUniformLocation(program, name);
     }
 
-    set (...values: any) {
+    set(...values: any) {
         let method = 'uniform' + this.suffix;
         let args = [this.location].concat(values);
         this.gl[method].apply(this.gl, args);
@@ -320,7 +336,7 @@ class Rect {
         gl.bufferData(gl.ARRAY_BUFFER, Rect.verts, gl.STATIC_DRAW);
     }
 
-    render (gl: WebGLRenderingContext) {
+    render(gl: WebGLRenderingContext) {
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
@@ -344,7 +360,6 @@ function clamp(numba: number, lower: number, upper: number) {
     }
     return numba;
 }
-
 
 
 new Fake3D();
