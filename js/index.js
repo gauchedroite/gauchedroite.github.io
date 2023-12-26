@@ -34,11 +34,11 @@ void main() {
   gl_Position = vec4( a_position, 0, 1 );
 }`;
 class Fake3D {
-    constructor() {
+    constructor(containerid) {
         this.imageAspect = 0;
         this.maxTilt = 0;
         this.program = null;
-        this.container = document.getElementById('gl');
+        this.container = document.getElementById(containerid);
         this.canvas = document.createElement('canvas');
         this.container.appendChild(this.canvas);
         this.gl = this.canvas.getContext('webgl');
@@ -119,9 +119,7 @@ class Fake3D {
         this.gl.vertexAttribPointer(this.positionLocation, 2, this.gl.FLOAT, false, 0, 0);
     }
     addTexture() {
-        let that = this;
-        let gl = that.gl;
-        loadImages(this.imageURLs, that.start.bind(this));
+        loadImages(this.imageURLs, this.start.bind(this));
     }
     start(images) {
         let that = this;
@@ -173,10 +171,11 @@ class Fake3D {
             const maxTiltY = 15;
             const x = beta - beta0;
             const y = gamma - gamma0;
-            me.mouseTargetX = -clamp(x, -maxTiltX, maxTiltX) / maxTiltX;
-            me.mouseTargetY = clamp(y, -maxTiltY, maxTiltY) / maxTiltY;
+            me.mouseTargetX = clamp(x, -maxTiltX, maxTiltX) / maxTiltX;
+            me.mouseTargetY = -clamp(y, -maxTiltY, maxTiltY) / maxTiltY;
             const log = document.getElementById("log");
-            log.innerHTML = `ɑ=${alpha.toFixed(1)} β=${beta.toFixed(1)} γ=${gamma.toFixed(1)} x=${me.mouseTargetX.toFixed(2)} y=${me.mouseTargetY.toFixed(2)}`;
+            if (log)
+                log.innerHTML = `ɑ=${alpha.toFixed(1)} β=${beta.toFixed(1)} γ=${gamma.toFixed(1)} x=${me.mouseTargetX.toFixed(2)} y=${me.mouseTargetY.toFixed(2)}`;
         }
         // Handle security on iOS 13+ devices
         const root = document.getElementById("root");
@@ -295,5 +294,5 @@ function clamp(numba, lower, upper) {
     }
     return numba;
 }
-new Fake3D();
+new Fake3D("gl");
 //# sourceMappingURL=index.js.map

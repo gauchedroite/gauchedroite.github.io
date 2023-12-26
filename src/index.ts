@@ -67,8 +67,8 @@ class Fake3D {
     maxTilt: number = 0;
     program: WebGLProgram | null = null;
 
-    constructor() {
-        this.container = document.getElementById('gl')!;
+    constructor(containerid: string) {
+        this.container = document.getElementById(containerid)!;
         this.canvas = document.createElement('canvas');
         this.container.appendChild(this.canvas);
         this.gl = this.canvas.getContext('webgl')!;
@@ -151,7 +151,6 @@ class Fake3D {
         this.gl.linkProgram(this.program);
         this.gl.useProgram(this.program);
 
-
         this.uResolution = new Uniform('resolution', '4f', this.program, this.gl);
         this.uMouse = new Uniform('mouse', '2f', this.program, this.gl);
         this.uTime = new Uniform('time', '1f', this.program, this.gl);
@@ -166,9 +165,7 @@ class Fake3D {
     }
 
     addTexture() {
-        let that = this;
-        let gl = that.gl;
-        loadImages(this.imageURLs, that.start.bind(this));
+        loadImages(this.imageURLs, this.start.bind(this));
     }
 
     start(images: any) {
@@ -237,11 +234,12 @@ class Fake3D {
             const x = beta - beta0!;
             const y = gamma - gamma0!;
 
-            me.mouseTargetX = -clamp(x, -maxTiltX, maxTiltX) / maxTiltX;
-            me.mouseTargetY = clamp(y, -maxTiltY, maxTiltY) / maxTiltY;
+            me.mouseTargetX = clamp(x, -maxTiltX, maxTiltX) / maxTiltX;
+            me.mouseTargetY = -clamp(y, -maxTiltY, maxTiltY) / maxTiltY;
 
-            const log = document.getElementById("log")!
-            log.innerHTML = `ɑ=${alpha.toFixed(1)} β=${beta.toFixed(1)} γ=${gamma.toFixed(1)} x=${me.mouseTargetX.toFixed(2)} y=${me.mouseTargetY.toFixed(2)}`;
+            const log = document.getElementById("log")
+            if (log)
+                log.innerHTML = `ɑ=${alpha.toFixed(1)} β=${beta.toFixed(1)} γ=${gamma.toFixed(1)} x=${me.mouseTargetX.toFixed(2)} y=${me.mouseTargetY.toFixed(2)}`;
         }
 
         // Handle security on iOS 13+ devices
@@ -389,4 +387,4 @@ function clamp(numba: number, lower: number, upper: number) {
 }
 
 
-new Fake3D();
+new Fake3D("gl");
