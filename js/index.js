@@ -157,7 +157,7 @@ class Fake3D {
         let gamma0 = null;
         let granted = false;
         let index = 0;
-        const SIZE = 50;
+        const SIZE = 25;
         const xs = new Array(SIZE).fill(0);
         const ys = new Array(SIZE).fill(0);
         window.addEventListener('deviceorientation', handleOrientation);
@@ -182,15 +182,16 @@ class Fake3D {
                 beta0 = beta;
             if (gamma0 == null)
                 gamma0 = gamma;
-            const maxTiltX = 15;
-            const maxTiltY = 15;
+            const maxTiltX = 10;
+            const maxTiltY = 10;
             const x = beta - beta0;
             const y = gamma - gamma0;
             me.mouseTargetX = clamp(x, -maxTiltX, maxTiltX) / maxTiltX;
             me.mouseTargetY = -clamp(y, -maxTiltY, maxTiltY) / maxTiltY;
             const log = document.getElementById("log");
             if (log)
-                log.innerHTML = `ɑ=${alpha.toFixed(1)} β=${beta.toFixed(1)} γ=${gamma.toFixed(1)} x=${me.mouseTargetX.toFixed(2)} y=${me.mouseTargetY.toFixed(2)}<br>
+                log.innerHTML = `ɑ=${alpha.toFixed(1)} β=${beta.toFixed(1)} γ=${gamma.toFixed(1)} x=${x.toFixed(2)} y=${y.toFixed(2)}<br>
+                mouxex=${me.mouseTargetX.toFixed(2)} mousey=${me.mouseTargetY.toFixed(2)}<br>
                 avgx=${averageX.toFixed(2)} varx=${varianceX.toFixed(2)} index=${index}<br>
                 avgy=${averageY.toFixed(2)} vary=${varianceY.toFixed(2)}`;
         }
