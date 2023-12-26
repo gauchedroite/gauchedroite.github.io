@@ -113,15 +113,10 @@
 	</style>
 </head>
 <body>
-	<div id="gl" 
-		data-imageOriginal="img/lady.jpg" 
-		data-imageDepth="img/lady-map.jpg" 
-		data-horizontalThreshold="35" 
-		data-verticalThreshold="15">
-	</div>
+	<div id="gl"></div>
 
 	<div id="root" class="parent" style="position:absolute; width:100vw; height:100vh;">
-		<div class="child">
+		<div id="billy" class="child">
 			<div class="left"><img src="img/geai-bleu-500x500.jpg" alt="Billy"></div>
 			<div class="right">Mon ami<br>Billy</div>
 		</div>
@@ -130,5 +125,29 @@
 	<div id="log"></div>
 
 	<script type="module" src="./js/index.js"></script>
+	<script type="module">
+		import Fake3D from "./js/index.js";
+
+		let options = {
+			glID: "gl",
+			rootID: "root",
+			logID: "log",
+			imageOriginal: "img/lady.jpg",
+			imageDepth: "img/lady-map.jpg",
+			horizontalThreshold: 35,
+			verticalThreshold: 15,
+			inertia: 0.95,
+			homeInertia: 0.15,
+		}
+
+		let fake3d = new Fake3D(options);
+		fake3d.magic();
+
+		const billy = document.getElementById("billy")
+		billy.addEventListener("click", () => {
+			//fake3d
+		})
+
+	</script>
 </body>
 </html>

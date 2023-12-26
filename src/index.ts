@@ -36,7 +36,23 @@ void main() {
 }`
 
 
-class Fake3D {
+type IFakeOptions = {
+    glID: string
+    rootID: string
+    logID: string
+    imageOriginal: string
+    imageDepth: string
+    verticalThreshold: number
+    horizontalThreshold: number
+    inertia: number
+    homeInertia: number
+    homeBufferSize: number
+    homeVariance: number
+    gyroTilt: number
+}
+
+export default class Fake3D {
+    options: IFakeOptions;
     container: HTMLElement;
     canvas: HTMLCanvasElement;
     gl: WebGLRenderingContext;
@@ -67,24 +83,37 @@ class Fake3D {
     maxTilt: number = 0;
     program: WebGLProgram | null = null;
 
-    constructor(containerid: string) {
-        this.container = document.getElementById(containerid)!;
-        this.canvas = document.createElement('canvas');
+    constructor(options: IFakeOptions) {
+        this.options = {...<IFakeOptions>{
+            glID: "gl",
+            rootID: "root",
+            horizontalThreshold: 35,
+            verticalThreshold: 15,
+            inertia: 0.1,
+            homeInertia: 0.15,
+            homeBufferSize: 25,
+            homeVariance: 0.01,
+            gyroTilt: 11
+        },  ...options}
+
+        this.container = document.getElementById(this.options.glID)!;
+        this.canvas = document.createElement("canvas");
         this.container.appendChild(this.canvas);
-        this.gl = this.canvas.getContext('webgl')!;
+        this.gl = this.canvas.getContext("webgl")!;
         this.ratio = window.devicePixelRatio;
         this.windowWidth = window.innerWidth;
         this.windowHeight = window.innerHeight;
+
         this.mouseX = 0;
         this.mouseY = 0;
 
         this.mouseTargetX = 0;
         this.mouseTargetY = 0;
 
-        this.imageOriginal = this.container.getAttribute('data-imageOriginal');
-        this.imageDepth = this.container.getAttribute('data-imageDepth');
-        this.vth = this.container.getAttribute('data-verticalThreshold');
-        this.hth = this.container.getAttribute('data-horizontalThreshold');
+        this.imageOriginal = this.options.imageOriginal;
+        this.imageDepth = this.options.imageDepth;
+        this.hth = this.options.horizontalThreshold;
+        this.vth = this.options.verticalThreshold;
 
         this.imageURLs = [
             this.imageOriginal,
@@ -92,8 +121,11 @@ class Fake3D {
         ];
         this.textures = [];
 
+        this.startTime = new Date().getTime();
+    }
 
-        this.startTime = new Date().getTime(); // Get start time for animating
+    magic() {
+        this.startTime = new Date().getTime();
 
         this.createScene();
         this.addTexture();
@@ -209,17 +241,23 @@ class Fake3D {
     }
 
     gyro() {
-        const me = this;
         let beta0: number | null = null;
         let gamma0: number | null = null;
         let currentbeta0: number | null = null;
         let currentgamma0: number | null = null;
         let granted = false;
-        let index = 0;
-        const SIZE = 25
-        const xs: number[] = new Array(SIZE).fill(0)
-        const ys: number[] = new Array(SIZE).fill(0)
 
+        let index = 0;
+        const homeBufferSize = this.options.homeBufferSize
+        const xs: number[] = new Array(homeBufferSize).fill(0)
+        const ys: number[] = new Array(homeBufferSize).fill(0)
+
+        const homeVariance = this.options.homeVariance;
+        const homeInertia = this.options.homeInertia;
+
+        const gyroTilt = this.options.gyroTilt;
+
+        const me = this;
         window.addEventListener('deviceorientation', handleOrientation);
         function handleOrientation(event: any) {
 
@@ -232,7 +270,7 @@ class Fake3D {
 
             xs[index] = beta
             ys[index] = gamma
-            index = (index + 1) % SIZE;
+            index = (index + 1) % homeBufferSize;
 
             const averageX = calculateMean(xs)
             const varianceX = calculateVariance(xs, averageX)
@@ -240,7 +278,7 @@ class Fake3D {
             const averageY = calculateMean(ys)
             const varianceY = calculateVariance(ys, averageY)
 
-            if (varianceX < 0.01 && varianceY < 0.01) {
+            if (varianceX < homeVariance && varianceY < homeVariance) {
                 beta0 = averageX;
                 gamma0 = averageY;
             }
@@ -252,28 +290,29 @@ class Fake3D {
             if (currentgamma0 == null) currentgamma0 = gamma0;
 
             // inertia
-            currentbeta0 += (beta0 - currentbeta0) * 0.15
-            currentgamma0 += (gamma0 - currentgamma0) * 0.15
+            currentbeta0 += (beta0 - currentbeta0) * homeInertia;
+            currentgamma0 += (gamma0 - currentgamma0) * homeInertia;
 
             const x = beta - currentbeta0!;
             const y = gamma - currentgamma0!;
 
-            const maxTiltX = 11;
-            const maxTiltY = 11;
+            const maxTiltX = gyroTilt;
+            const maxTiltY = gyroTilt;
             me.mouseTargetX = clamp(x, -maxTiltX, maxTiltX) / maxTiltX;
             me.mouseTargetY = -clamp(y, -maxTiltY, maxTiltY) / maxTiltY;
 
-            const log = document.getElementById("log")
-            if (log)
-                log.innerHTML = `ɑ=${toFixed2(alpha)} β=${toFixed2(beta)} γ=${toFixed2(gamma)} x=${toFixed2(x)} y=${toFixed2(y)}<br>
+            const logElement = document.getElementById(me.options.logID)
+            if (logElement)
+                logElement.innerHTML = `ɑ=${toFixed2(alpha)} β=${toFixed2(beta)} γ=${toFixed2(gamma)} x=${toFixed2(x)} y=${toFixed2(y)}<br>
                 mouxex=${toFixed2(me.mouseTargetX)} mousey=${toFixed2(me.mouseTargetY)}<br>
                 avgx=${toFixed2(averageX)} varx=${toFixed2(varianceX)} index=${index}<br>
                 avgy=${toFixed2(averageY)} vary=${toFixed2(varianceY)}`;
-            }
+        }
 
         // Handle security on iOS 13+ devices
-        const root = document.getElementById("root")!;
+        const root = document.getElementById(this.options.rootID)!;
         root.addEventListener("click", () => {
+            beta0 = null
             gamma0 = null
             if (granted) {
                 window.removeEventListener('devicemotion', handleOrientation);
@@ -316,8 +355,8 @@ class Fake3D {
         this.uTime.set(currentTime);
 
         // inertia
-        let x = this.mouseX += (this.mouseTargetX - this.mouseX) * 0.9;
-        let y = this.mouseY += (this.mouseTargetY - this.mouseY) * 0.9;
+        let x = this.mouseX += (this.mouseTargetX - this.mouseX) * this.options.inertia;
+        let y = this.mouseY += (this.mouseTargetY - this.mouseY) * this.options.inertia;
 
         const radius = Math.sqrt((x * x) + (y * y));
         if (radius > 1) {
@@ -434,8 +473,3 @@ const toFixed2 = (numba: number) => {
     const fixed = numba.toFixed(2)
     return (fixed[0] == "-" ? fixed : "+" + fixed)
 }
-
-
-
-
-new Fake3D("gl");
