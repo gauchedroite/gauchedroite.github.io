@@ -176,10 +176,12 @@ class Fake3D {
             const varianceX = calculateVariance(xs, averageX);
             const averageY = calculateMean(ys);
             const varianceY = calculateVariance(ys, averageY);
-            if (varianceX < 0.02)
+            // if (varianceX < 0.02) beta0 = averageX;
+            // if (varianceY < 0.02) gamma0 = averageY;
+            if (varianceX < 0.02 && varianceY < 0.02) {
                 beta0 = averageX;
-            if (varianceY < 0.02)
                 gamma0 = averageY;
+            }
             if (beta0 == null)
                 beta0 = beta;
             if (gamma0 == null)
@@ -188,8 +190,9 @@ class Fake3D {
                 currentbeta0 = beta0;
             if (currentgamma0 == null)
                 currentgamma0 = gamma0;
-            currentbeta0 += (beta0 - currentbeta0) * 0.1;
-            currentgamma0 += (gamma0 - currentgamma0) * 0.1;
+            // inertia
+            currentbeta0 += (beta0 - currentbeta0) * 0.05;
+            currentgamma0 += (gamma0 - currentgamma0) * 0.05;
             const x = beta - currentbeta0;
             const y = gamma - currentgamma0;
             const maxTiltX = 5;
