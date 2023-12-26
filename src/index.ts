@@ -214,7 +214,7 @@ class Fake3D {
         let gamma0: number | null = null;
         let granted = false;
         let index = 0;
-        const SIZE = 200
+        const SIZE = 100
         const xs: number[] = new Array(SIZE).fill(0)
         const ys: number[] = new Array(SIZE).fill(0)
 
@@ -235,9 +235,9 @@ class Fake3D {
             const averageX = calculateMean(xs)
             const varianceX = calculateVariance(xs, averageX)
 
-            if (gamma0 == undefined || beta0 == undefined) {
+            if (varianceX < 0.05) {
+                beta0 = averageX;
                 gamma0 = gamma;
-                beta0 = beta;
             }
 
             const maxTiltX = 2;

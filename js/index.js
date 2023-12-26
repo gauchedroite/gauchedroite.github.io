@@ -157,7 +157,7 @@ class Fake3D {
         let gamma0 = null;
         let granted = false;
         let index = 0;
-        const SIZE = 200;
+        const SIZE = 100;
         const xs = new Array(SIZE).fill(0);
         const ys = new Array(SIZE).fill(0);
         window.addEventListener('deviceorientation', handleOrientation);
@@ -172,9 +172,9 @@ class Fake3D {
             index = (index + 1) % SIZE;
             const averageX = calculateMean(xs);
             const varianceX = calculateVariance(xs, averageX);
-            if (gamma0 == undefined || beta0 == undefined) {
+            if (varianceX < 0.05) {
+                beta0 = averageX;
                 gamma0 = gamma;
-                beta0 = beta;
             }
             const maxTiltX = 2;
             const maxTiltY = 3;
