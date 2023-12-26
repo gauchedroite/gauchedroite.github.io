@@ -212,6 +212,8 @@ class Fake3D {
         const me = this;
         let beta0: number | null = null;
         let gamma0: number | null = null;
+        let currentbeta0: number | null = null;
+        let currentgamma0: number | null = null;
         let granted = false;
         let index = 0;
         const SIZE = 50
@@ -238,17 +240,23 @@ class Fake3D {
             const averageY = calculateMean(ys)
             const varianceY = calculateVariance(ys, averageY)
 
-            if (varianceX < 0.05) beta0 = averageX;
-            if (varianceY < 0.05) gamma0 = averageY;
+            if (varianceX < 0.02) beta0 = averageX;
+            if (varianceY < 0.02) gamma0 = averageY;
 
             if (beta0 == null) beta0 = beta;
             if (gamma0 == null) gamma0 = gamma;
 
-            const maxTiltX = 7;
-            const maxTiltY = 7;
-            const x = beta - beta0!;
-            const y = gamma - gamma0!;
+            if (currentbeta0 == null) currentbeta0 = beta0;
+            if (currentgamma0 == null) currentgamma0 = gamma0;
 
+            currentbeta0 += (beta0 - currentbeta0) * 0.1
+            currentgamma0 += (gamma0 - currentgamma0) * 0.1
+
+            const x = beta - currentbeta0!;
+            const y = gamma - currentgamma0!;
+
+            const maxTiltX = 5;
+            const maxTiltY = 5;
             me.mouseTargetX = clamp(x, -maxTiltX, maxTiltX) / maxTiltX;
             me.mouseTargetY = -clamp(y, -maxTiltY, maxTiltY) / maxTiltY;
 
