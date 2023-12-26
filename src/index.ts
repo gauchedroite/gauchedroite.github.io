@@ -216,7 +216,7 @@ class Fake3D {
         let currentgamma0: number | null = null;
         let granted = false;
         let index = 0;
-        const SIZE = 50
+        const SIZE = 30
         const xs: number[] = new Array(SIZE).fill(0)
         const ys: number[] = new Array(SIZE).fill(0)
 

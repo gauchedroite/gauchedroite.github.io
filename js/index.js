@@ -159,7 +159,7 @@ class Fake3D {
         let currentgamma0 = null;
         let granted = false;
         let index = 0;
-        const SIZE = 50;
+        const SIZE = 30;
         const xs = new Array(SIZE).fill(0);
         const ys = new Array(SIZE).fill(0);
         window.addEventListener('deviceorientation', handleOrientation);
