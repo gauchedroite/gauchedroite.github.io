@@ -156,6 +156,7 @@ class Fake3D {
     gyro() {
         const me = this;
         let gamma0 = null;
+        let granted = false;
         window.addEventListener('deviceorientation', handleOrientation);
         function handleOrientation(event) {
             if (event == undefined || event.alpha == undefined || event.beta == undefined || event.gamma == undefined)
@@ -172,23 +173,31 @@ class Fake3D {
             me.mouseTargetY = clamp(y, -maxTilt, maxTilt) / maxTilt;
             const log = document.getElementById("log");
             log.innerHTML = `ɑ=${alpha.toFixed(1)} β=${beta.toFixed(1)} γ=${gamma.toFixed(1)} x=${me.mouseTargetX.toFixed(2)} y=${me.mouseTargetY.toFixed(2)}`;
-            console.log(`ɑ=${alpha.toFixed(1)} β=${beta.toFixed(1)} γ=${gamma.toFixed(1)} x=${me.mouseTargetX.toFixed(2)} y=${me.mouseTargetY.toFixed(2)}`);
         }
         // Handle security on iOS 13+ devices
         const root = document.getElementById("root");
         root.addEventListener("click", () => {
-            if (typeof DeviceMotionEvent.requestPermission === 'function') {
-                DeviceMotionEvent.requestPermission()
-                    .then((state) => {
-                    if (state === 'granted')
-                        window.addEventListener('devicemotion', handleOrientation);
-                    else
-                        console.error('Request to access the orientation was rejected');
-                })
-                    .catch(console.error);
+            gamma0 = null;
+            if (granted) {
+                window.removeEventListener('devicemotion', handleOrientation);
+                granted = false;
             }
             else {
-                window.addEventListener('devicemotion', handleOrientation);
+                if (typeof DeviceMotionEvent.requestPermission === 'function') {
+                    DeviceMotionEvent.requestPermission()
+                        .then((state) => {
+                        if (state === 'granted') {
+                            granted = true;
+                            window.addEventListener('devicemotion', handleOrientation);
+                        }
+                        else
+                            console.error('Request to access the orientation was rejected');
+                    })
+                        .catch(console.error);
+                }
+                else {
+                    window.addEventListener('devicemotion', handleOrientation);
+                }
             }
         });
     }
