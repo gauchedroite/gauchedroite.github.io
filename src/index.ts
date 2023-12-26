@@ -232,12 +232,13 @@ class Fake3D {
                 beta0 = beta;
             }
 
-            const maxTilt = 10;
+            const maxTiltX = 7;
+            const maxTiltY = 10;
             const x = beta - beta0!;
             const y = gamma - gamma0!;
 
-            me.mouseTargetX = -clamp(x, -maxTilt, maxTilt) / maxTilt;
-            me.mouseTargetY = clamp(y, -maxTilt, maxTilt) / maxTilt;
+            me.mouseTargetX = -clamp(x, -maxTiltX, maxTiltX) / maxTiltX;
+            me.mouseTargetY = clamp(y, -maxTiltY, maxTiltY) / maxTiltY;
 
             const log = document.getElementById("log")!
             log.innerHTML = `ɑ=${alpha.toFixed(1)} β=${beta.toFixed(1)} γ=${gamma.toFixed(1)} x=${me.mouseTargetX.toFixed(2)} y=${me.mouseTargetY.toFixed(2)}`;
