@@ -214,7 +214,7 @@ class Fake3D {
         let gamma0: number | null = null;
         let granted = false;
         let index = 0;
-        const SIZE = 100
+        const SIZE = 50
         const xs: number[] = new Array(SIZE).fill(0)
         const ys: number[] = new Array(SIZE).fill(0)
 
@@ -241,8 +241,8 @@ class Fake3D {
             if (varianceX < 0.05) beta0 = averageX;
             if (varianceY < 0.05) gamma0 = averageY;
 
-            const maxTiltX = 2;
-            const maxTiltY = 3;
+            const maxTiltX = 6;
+            const maxTiltY = 8;
             const x = beta - beta0!;
             const y = gamma - gamma0!;
 
@@ -285,10 +285,6 @@ class Fake3D {
     }
 
     mouseMove() {
-        // const SIZE = 5
-        // let index = 0;
-        // const xs: number[] = new Array(SIZE).fill(0)
-
         let that = this;
         document.addEventListener('mousemove', function (e) {
             let halfX = that.windowWidth / 2;
@@ -296,14 +292,6 @@ class Fake3D {
 
             that.mouseTargetX = (halfX - e.clientX) / halfX;
             that.mouseTargetY = (halfY - e.clientY) / halfY;
-
-            // xs[index] = e.clientX
-            // index = (index + 1) % SIZE;
-    
-            // const averageX = calculateMean(xs)
-            // const varianceX = calculateVariance(xs, averageX)
-
-            //console.log(`avgx=${averageX.toFixed(2)} varx=${varianceX.toFixed(2)} index=${index}`)
         });
     }
 
@@ -313,8 +301,8 @@ class Fake3D {
         this.uTime.set(currentTime);
 
         // inertia
-        let x = this.mouseX += (this.mouseTargetX - this.mouseX) * 0.75;
-        let y = this.mouseY += (this.mouseTargetY - this.mouseY) * 0.75;
+        let x = this.mouseX += (this.mouseTargetX - this.mouseX) * 0.25;
+        let y = this.mouseY += (this.mouseTargetY - this.mouseY) * 0.25;
 
         const radius = Math.sqrt((x * x) + (y * y));
         if (radius > 0.99) {
