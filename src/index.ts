@@ -229,8 +229,8 @@ class Fake3D {
                 beta0 = beta;
             }
 
-            const maxTiltX = 5;
-            const maxTiltY = 7.5;
+            const maxTiltX = 2;
+            const maxTiltY = 3;
             const x = beta - beta0!;
             const y = gamma - gamma0!;
 
