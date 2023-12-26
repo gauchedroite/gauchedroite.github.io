@@ -213,6 +213,10 @@ class Fake3D {
         let beta0: number | null = null;
         let gamma0: number | null = null;
         let granted = false;
+        let index = 0;
+        const SIZE = 200
+        const xs: number[] = new Array(SIZE).fill(0)
+        const ys: number[] = new Array(SIZE).fill(0)
 
         window.addEventListener('deviceorientation', handleOrientation);
         function handleOrientation(event: any) {
@@ -223,6 +227,13 @@ class Fake3D {
             const alpha: number = event.alpha;
             const beta: number = event.beta;
             const gamma: number = event.gamma;
+
+            xs[index] = beta
+            ys[index] = gamma
+            index = (index + 1) % SIZE;
+
+            const averageX = calculateMean(xs)
+            const varianceX = calculateVariance(xs, averageX)
 
             if (gamma0 == undefined || beta0 == undefined) {
                 gamma0 = gamma;
@@ -239,7 +250,8 @@ class Fake3D {
 
             const log = document.getElementById("log")
             if (log)
-                log.innerHTML = `ɑ=${alpha.toFixed(1)} β=${beta.toFixed(1)} γ=${gamma.toFixed(1)} x=${me.mouseTargetX.toFixed(2)} y=${me.mouseTargetY.toFixed(2)}`;
+                log.innerHTML = `ɑ=${alpha.toFixed(1)} β=${beta.toFixed(1)} γ=${gamma.toFixed(1)} x=${me.mouseTargetX.toFixed(2)} y=${me.mouseTargetY.toFixed(2)}<br>
+                    avgx=${averageX.toFixed(1)} varx=${varianceX.toFixed(1)}`;
         }
 
         // Handle security on iOS 13+ devices
@@ -385,6 +397,21 @@ function clamp(numba: number, lower: number, upper: number) {
     }
     return numba;
 }
+
+const calculateMean = (values: number[]) => {
+    if (values.length == 0)
+        return 0;
+    return (values.reduce((sum, current) => sum + current), 0) / values.length;
+}
+
+const calculateVariance = (values: number[], average: number) => {
+    const squareDiffs = values.map((value) => {
+        const diff = value - average;
+        return diff * diff;
+    });
+    const variance = calculateMean(squareDiffs);
+    return variance;
+};
 
 
 new Fake3D("gl");

@@ -156,6 +156,10 @@ class Fake3D {
         let beta0 = null;
         let gamma0 = null;
         let granted = false;
+        let index = 0;
+        const SIZE = 200;
+        const xs = new Array(SIZE).fill(0);
+        const ys = new Array(SIZE).fill(0);
         window.addEventListener('deviceorientation', handleOrientation);
         function handleOrientation(event) {
             if (event == undefined || event.alpha == undefined || event.beta == undefined || event.gamma == undefined)
@@ -163,6 +167,11 @@ class Fake3D {
             const alpha = event.alpha;
             const beta = event.beta;
             const gamma = event.gamma;
+            xs[index] = beta;
+            ys[index] = gamma;
+            index = (index + 1) % SIZE;
+            const averageX = calculateMean(xs);
+            const varianceX = calculateVariance(xs, averageX);
             if (gamma0 == undefined || beta0 == undefined) {
                 gamma0 = gamma;
                 beta0 = beta;
@@ -175,7 +184,8 @@ class Fake3D {
             me.mouseTargetY = -clamp(y, -maxTiltY, maxTiltY) / maxTiltY;
             const log = document.getElementById("log");
             if (log)
-                log.innerHTML = `ɑ=${alpha.toFixed(1)} β=${beta.toFixed(1)} γ=${gamma.toFixed(1)} x=${me.mouseTargetX.toFixed(2)} y=${me.mouseTargetY.toFixed(2)}`;
+                log.innerHTML = `ɑ=${alpha.toFixed(1)} β=${beta.toFixed(1)} γ=${gamma.toFixed(1)} x=${me.mouseTargetX.toFixed(2)} y=${me.mouseTargetY.toFixed(2)}<br>
+                    avgx=${averageX.toFixed(1)} varx=${varianceX.toFixed(1)}`;
         }
         // Handle security on iOS 13+ devices
         const root = document.getElementById("root");
@@ -294,5 +304,18 @@ function clamp(numba, lower, upper) {
     }
     return numba;
 }
+const calculateMean = (values) => {
+    if (values.length == 0)
+        return 0;
+    return (values.reduce((sum, current) => sum + current), 0) / values.length;
+};
+const calculateVariance = (values, average) => {
+    const squareDiffs = values.map((value) => {
+        const diff = value - average;
+        return diff * diff;
+    });
+    const variance = calculateMean(squareDiffs);
+    return variance;
+};
 new Fake3D("gl");
 //# sourceMappingURL=index.js.map
