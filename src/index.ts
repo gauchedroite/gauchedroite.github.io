@@ -251,7 +251,7 @@ class Fake3D {
             const log = document.getElementById("log")
             if (log)
                 log.innerHTML = `ɑ=${alpha.toFixed(1)} β=${beta.toFixed(1)} γ=${gamma.toFixed(1)} x=${me.mouseTargetX.toFixed(2)} y=${me.mouseTargetY.toFixed(2)}<br>
-                    avgx=${averageX.toFixed(1)} varx=${varianceX.toFixed(1)}`;
+                    avgx=${averageX.toFixed(2)} varx=${varianceX.toFixed(2)} index=${index}`;
         }
 
         // Handle security on iOS 13+ devices
@@ -283,6 +283,10 @@ class Fake3D {
     }
 
     mouseMove() {
+        // const SIZE = 5
+        // let index = 0;
+        // const xs: number[] = new Array(SIZE).fill(0)
+
         let that = this;
         document.addEventListener('mousemove', function (e) {
             let halfX = that.windowWidth / 2;
@@ -290,6 +294,14 @@ class Fake3D {
 
             that.mouseTargetX = (halfX - e.clientX) / halfX;
             that.mouseTargetY = (halfY - e.clientY) / halfY;
+
+            // xs[index] = e.clientX
+            // index = (index + 1) % SIZE;
+    
+            // const averageX = calculateMean(xs)
+            // const varianceX = calculateVariance(xs, averageX)
+
+            //console.log(`avgx=${averageX.toFixed(2)} varx=${varianceX.toFixed(2)} index=${index}`)
         });
     }
 
@@ -401,7 +413,7 @@ function clamp(numba: number, lower: number, upper: number) {
 const calculateMean = (values: number[]) => {
     if (values.length == 0)
         return 0;
-    return (values.reduce((sum, current) => sum + current), 0) / values.length;
+    return (values.reduce((sum, current) => sum + current)) / values.length;
 }
 
 const calculateVariance = (values: number[], average: number) => {
