@@ -219,9 +219,9 @@ class Fake3D {
         function handleOrientation(event: any) {
             //console.log("gyro")
 
-            const alpha = event.alpha;
-            const beta = event.beta;
-            const gamma = event.gamma;
+            const alpha: number = event.alpha;
+            const beta: number = event.beta;
+            const gamma: number = event.gamma;
 
             if (gamma0 == undefined)
                 gamma0 = gamma;
@@ -232,6 +232,11 @@ class Fake3D {
 
             me.mouseTargetX = -clamp(x, -maxTilt, maxTilt) / maxTilt;
             me.mouseTargetY = clamp(y, -maxTilt, maxTilt) / maxTilt;
+
+            const log = document.getElementById("log")!
+            log.innerHTML = `ɑ=${alpha.toFixed(1)} β=${beta.toFixed(1)} γ=${gamma.toFixed(1)} x=${me.mouseTargetX.toFixed(2)} y=${me.mouseTargetY.toFixed(2)}`;
+
+            console.log(`ɑ=${alpha.toFixed(1)} β=${beta.toFixed(1)} γ=${gamma.toFixed(1)} x=${me.mouseTargetX.toFixed(2)} y=${me.mouseTargetY.toFixed(2)}`)
         }
 
         // Handle security on iOS 13+ devices

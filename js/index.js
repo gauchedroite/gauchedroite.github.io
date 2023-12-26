@@ -169,6 +169,9 @@ class Fake3D {
             const y = gamma - gamma0;
             me.mouseTargetX = -clamp(x, -maxTilt, maxTilt) / maxTilt;
             me.mouseTargetY = clamp(y, -maxTilt, maxTilt) / maxTilt;
+            const log = document.getElementById("log");
+            log.innerHTML = `ɑ=${alpha.toFixed(1)} β=${beta.toFixed(1)} γ=${gamma.toFixed(1)} x=${me.mouseTargetX.toFixed(2)} y=${me.mouseTargetY.toFixed(2)}`;
+            console.log(`ɑ=${alpha.toFixed(1)} β=${beta.toFixed(1)} γ=${gamma.toFixed(1)} x=${me.mouseTargetX.toFixed(2)} y=${me.mouseTargetY.toFixed(2)}`);
         }
         // Handle security on iOS 13+ devices
         const root = document.getElementById("root");
