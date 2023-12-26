@@ -229,7 +229,7 @@ class Fake3D {
             if (gamma0 == undefined)
                 gamma0 = gamma;
 
-            const maxTilt = 15;
+            const maxTilt = 10;
             const x = beta;
             const y = gamma - gamma0!;
 
