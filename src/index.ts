@@ -316,11 +316,11 @@ class Fake3D {
         this.uTime.set(currentTime);
 
         // inertia
-        let x = this.mouseX += (this.mouseTargetX - this.mouseX) * 0.75;
-        let y = this.mouseY += (this.mouseTargetY - this.mouseY) * 0.75;
+        let x = this.mouseX += (this.mouseTargetX - this.mouseX) * 0.85;
+        let y = this.mouseY += (this.mouseTargetY - this.mouseY) * 0.05;
 
         const radius = Math.sqrt((x * x) + (y * y));
-        if (radius > 0.99) {
+        if (radius > 1) {
             x = x / radius;
             y = y / radius;
         }
@@ -330,32 +330,6 @@ class Fake3D {
         // render
         this.billboard.render(this.gl);
         requestAnimationFrame(this.render.bind(this));
-    }
-}
-
-function loadImage(url: string, callback: any) {
-    var image = new Image();
-    image.src = url;
-    image.onload = callback;
-    return image;
-}
-
-function loadImages(urls: string[], callback: any) {
-    var images: any[] = [];
-    var imagesToLoad = urls.length;
-
-    // Called each time an image finished loading.
-    var onImageLoad = function () {
-        --imagesToLoad;
-        // If all the images are loaded call the callback.
-        if (imagesToLoad === 0) {
-            callback(images);
-        }
-    };
-
-    for (var ii = 0; ii < imagesToLoad; ++ii) {
-        var image = loadImage(urls[ii], onImageLoad);
-        images.push(image);
     }
 }
 
@@ -403,6 +377,32 @@ class Rect {
 }
 
 
+function loadImage(url: string, callback: any) {
+    var image = new Image();
+    image.src = url;
+    image.onload = callback;
+    return image;
+}
+
+function loadImages(urls: string[], callback: any) {
+    var images: any[] = [];
+    var imagesToLoad = urls.length;
+
+    // Called each time an image finished loading.
+    var onImageLoad = function () {
+        --imagesToLoad;
+        // If all the images are loaded call the callback.
+        if (imagesToLoad === 0) {
+            callback(images);
+        }
+    };
+
+    for (var ii = 0; ii < imagesToLoad; ++ii) {
+        var image = loadImage(urls[ii], onImageLoad);
+        images.push(image);
+    }
+}
+
 function clamp(numba: number, lower: number, upper: number) {
     if (numba != undefined) {
         if (upper != undefined) {
@@ -434,6 +434,8 @@ const toFixed2 = (numba: number) => {
     const fixed = numba.toFixed(2)
     return (fixed[0] == "-" ? fixed : "+" + fixed)
 }
+
+
 
 
 new Fake3D("gl");

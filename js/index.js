@@ -245,10 +245,10 @@ class Fake3D {
         let currentTime = (now - this.startTime) / 1000;
         this.uTime.set(currentTime);
         // inertia
-        let x = this.mouseX += (this.mouseTargetX - this.mouseX) * 0.75;
-        let y = this.mouseY += (this.mouseTargetY - this.mouseY) * 0.75;
+        let x = this.mouseX += (this.mouseTargetX - this.mouseX) * 0.85;
+        let y = this.mouseY += (this.mouseTargetY - this.mouseY) * 0.05;
         const radius = Math.sqrt((x * x) + (y * y));
-        if (radius > 0.99) {
+        if (radius > 1) {
             x = x / radius;
             y = y / radius;
         }
@@ -256,28 +256,6 @@ class Fake3D {
         // render
         this.billboard.render(this.gl);
         requestAnimationFrame(this.render.bind(this));
-    }
-}
-function loadImage(url, callback) {
-    var image = new Image();
-    image.src = url;
-    image.onload = callback;
-    return image;
-}
-function loadImages(urls, callback) {
-    var images = [];
-    var imagesToLoad = urls.length;
-    // Called each time an image finished loading.
-    var onImageLoad = function () {
-        --imagesToLoad;
-        // If all the images are loaded call the callback.
-        if (imagesToLoad === 0) {
-            callback(images);
-        }
-    };
-    for (var ii = 0; ii < imagesToLoad; ++ii) {
-        var image = loadImage(urls[ii], onImageLoad);
-        images.push(image);
     }
 }
 class Uniform {
@@ -310,6 +288,28 @@ Rect.verts = new Float32Array([
     -1, 1,
     1, 1,
 ]);
+function loadImage(url, callback) {
+    var image = new Image();
+    image.src = url;
+    image.onload = callback;
+    return image;
+}
+function loadImages(urls, callback) {
+    var images = [];
+    var imagesToLoad = urls.length;
+    // Called each time an image finished loading.
+    var onImageLoad = function () {
+        --imagesToLoad;
+        // If all the images are loaded call the callback.
+        if (imagesToLoad === 0) {
+            callback(images);
+        }
+    };
+    for (var ii = 0; ii < imagesToLoad; ++ii) {
+        var image = loadImage(urls[ii], onImageLoad);
+        images.push(image);
+    }
+}
 function clamp(numba, lower, upper) {
     if (numba != undefined) {
         if (upper != undefined) {
