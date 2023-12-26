@@ -195,8 +195,8 @@ class Fake3D {
             currentgamma0 += (gamma0 - currentgamma0) * 0.05;
             const x = beta - currentbeta0;
             const y = gamma - currentgamma0;
-            const maxTiltX = 5;
-            const maxTiltY = 5;
+            const maxTiltX = 8;
+            const maxTiltY = 8;
             me.mouseTargetX = clamp(x, -maxTiltX, maxTiltX) / maxTiltX;
             me.mouseTargetY = -clamp(y, -maxTiltY, maxTiltY) / maxTiltY;
             const log = document.getElementById("log");
