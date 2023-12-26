@@ -289,8 +289,8 @@ class Fake3D {
         this.uTime.set(currentTime);
 
         // inertia
-        this.mouseX += (this.mouseTargetX - this.mouseX) * 0.05;
-        this.mouseY += (this.mouseTargetY - this.mouseY) * 0.05;
+        this.mouseX += (this.mouseTargetX - this.mouseX) * 0.5;
+        this.mouseY += (this.mouseTargetY - this.mouseY) * 0.5;
 
         this.uMouse.set(this.mouseX, this.mouseY);
 
