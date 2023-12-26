@@ -189,12 +189,12 @@ class Fake3D {
             if (currentgamma0 == null)
                 currentgamma0 = gamma0;
             // inertia
-            currentbeta0 += (beta0 - currentbeta0) * 0.2;
-            currentgamma0 += (gamma0 - currentgamma0) * 0.2;
+            currentbeta0 += (beta0 - currentbeta0) * 0.15;
+            currentgamma0 += (gamma0 - currentgamma0) * 0.15;
             const x = beta - currentbeta0;
             const y = gamma - currentgamma0;
-            const maxTiltX = 12;
-            const maxTiltY = 12;
+            const maxTiltX = 11;
+            const maxTiltY = 11;
             me.mouseTargetX = clamp(x, -maxTiltX, maxTiltX) / maxTiltX;
             me.mouseTargetY = -clamp(y, -maxTiltY, maxTiltY) / maxTiltY;
             const log = document.getElementById("log");
