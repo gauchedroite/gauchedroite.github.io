@@ -238,8 +238,11 @@ class Fake3D {
             const averageY = calculateMean(ys)
             const varianceY = calculateVariance(ys, averageY)
 
-            //if (varianceX < 0.05) beta0 = averageX;
-            //if (varianceY < 0.05) gamma0 = averageY;
+            if (varianceX < 0.05) beta0 = averageX;
+            if (varianceY < 0.05) gamma0 = averageY;
+
+            if (beta0 == null) beta0 = beta;
+            if (gamma0 == null) gamma0 = gamma;
 
             const maxTiltX = 15;
             const maxTiltY = 15;
