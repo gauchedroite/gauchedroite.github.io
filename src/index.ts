@@ -235,10 +235,11 @@ class Fake3D {
             const averageX = calculateMean(xs)
             const varianceX = calculateVariance(xs, averageX)
 
-            if (varianceX < 0.05) {
-                beta0 = averageX;
-                gamma0 = gamma;
-            }
+            const averageY = calculateMean(ys)
+            const varianceY = calculateVariance(ys, averageY)
+
+            if (varianceX < 0.05) beta0 = averageX;
+            if (varianceY < 0.05) gamma0 = averageY;
 
             const maxTiltX = 2;
             const maxTiltY = 3;
@@ -251,8 +252,9 @@ class Fake3D {
             const log = document.getElementById("log")
             if (log)
                 log.innerHTML = `ɑ=${alpha.toFixed(1)} β=${beta.toFixed(1)} γ=${gamma.toFixed(1)} x=${me.mouseTargetX.toFixed(2)} y=${me.mouseTargetY.toFixed(2)}<br>
-                    avgx=${averageX.toFixed(2)} varx=${varianceX.toFixed(2)} index=${index}`;
-        }
+                avgx=${averageX.toFixed(2)} varx=${varianceX.toFixed(2)} index=${index}<br>
+                avgy=${averageY.toFixed(2)} vary=${varianceY.toFixed(2)}`;
+            }
 
         // Handle security on iOS 13+ devices
         const root = document.getElementById("root")!;
