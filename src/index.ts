@@ -213,6 +213,7 @@ class Fake3D {
 
     gyro() {
         const me = this;
+        let beta0: number | null = null;
         let gamma0: number | null = null;
         let granted = false;
 
@@ -226,11 +227,13 @@ class Fake3D {
             const beta: number = event.beta;
             const gamma: number = event.gamma;
 
-            if (gamma0 == undefined)
+            if (gamma0 == undefined || beta0 == undefined) {
                 gamma0 = gamma;
+                beta0 = beta;
+            }
 
             const maxTilt = 10;
-            const x = beta;
+            const x = beta - beta0;
             const y = gamma - gamma0!;
 
             me.mouseTargetX = -clamp(x, -maxTilt, maxTilt) / maxTilt;

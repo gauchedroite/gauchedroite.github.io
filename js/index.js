@@ -155,6 +155,7 @@ class Fake3D {
     }
     gyro() {
         const me = this;
+        let beta0 = null;
         let gamma0 = null;
         let granted = false;
         window.addEventListener('deviceorientation', handleOrientation);
@@ -164,10 +165,12 @@ class Fake3D {
             const alpha = event.alpha;
             const beta = event.beta;
             const gamma = event.gamma;
-            if (gamma0 == undefined)
+            if (gamma0 == undefined || beta0 == undefined) {
                 gamma0 = gamma;
+                beta0 = beta;
+            }
             const maxTilt = 10;
-            const x = beta;
+            const x = beta - beta0;
             const y = gamma - gamma0;
             me.mouseTargetX = -clamp(x, -maxTilt, maxTilt) / maxTilt;
             me.mouseTargetY = clamp(y, -maxTilt, maxTilt) / maxTilt;
