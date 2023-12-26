@@ -169,8 +169,8 @@ class Fake3D {
                 gamma0 = gamma;
                 beta0 = beta;
             }
-            const maxTiltX = 15;
-            const maxTiltY = 20;
+            const maxTiltX = 6;
+            const maxTiltY = 10;
             const x = beta - beta0;
             const y = gamma - gamma0;
             me.mouseTargetX = -clamp(x, -maxTiltX, maxTiltX) / maxTiltX;
