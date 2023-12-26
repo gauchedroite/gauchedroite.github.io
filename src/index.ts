@@ -213,12 +213,18 @@ class Fake3D {
 
     gyro() {
         const me = this;
+        let gamma0: number | null = null;
 
         window.addEventListener('deviceorientation', handleOrientation);
         function handleOrientation(event: any) {
+            //console.log("gyro")
+            if (gamma0 == undefined) {
+                gamma0 = event.gamma;
+            }
+
             const alpha = event.alpha;
             const beta = event.beta;
-            const gamma = event.gamma;
+            const gamma = event.gamma - gamma0!;
 
             const maxTilt = 15;
             const y = gamma;
@@ -228,26 +234,22 @@ class Fake3D {
             me.mouseTargetX = -clamp(y, -maxTilt, maxTilt) / maxTilt;
         }
 
+        // Handle security on iOS 13+ devices
         const root = document.getElementById("root")!;
         root.addEventListener("click", () => {
             if (typeof (DeviceMotionEvent as any).requestPermission === 'function') {
-                // Handle iOS 13+ devices.
                 (DeviceMotionEvent as any).requestPermission()
                     .then((state: any) => {
-                        if (state === 'granted') {
+                        if (state === 'granted')
                             window.addEventListener('devicemotion', handleOrientation);
-                        }
-                        else {
+                        else
                             console.error('Request to access the orientation was rejected');
-                        }
                     })
                     .catch(console.error);
             }
             else {
-                // Handle regular non iOS 13+ devices.
                 window.addEventListener('devicemotion', handleOrientation);
             }
-
         })
     }
 
