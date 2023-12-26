@@ -176,9 +176,9 @@ class Fake3D {
             const varianceX = calculateVariance(xs, averageX);
             const averageY = calculateMean(ys);
             const varianceY = calculateVariance(ys, averageY);
-            // if (varianceX < 0.02) beta0 = averageX;
-            // if (varianceY < 0.02) gamma0 = averageY;
-            if (varianceX < 0.02 && varianceY < 0.02) {
+            // if (varianceX < 0.01) beta0 = averageX;
+            // if (varianceY < 0.01) gamma0 = averageY;
+            if (varianceX < 0.01 && varianceY < 0.01) {
                 beta0 = averageX;
                 gamma0 = averageY;
             }
@@ -195,16 +195,16 @@ class Fake3D {
             currentgamma0 += (gamma0 - currentgamma0) * 0.05;
             const x = beta - currentbeta0;
             const y = gamma - currentgamma0;
-            const maxTiltX = 8;
+            const maxTiltX = 10;
             const maxTiltY = 8;
             me.mouseTargetX = clamp(x, -maxTiltX, maxTiltX) / maxTiltX;
             me.mouseTargetY = -clamp(y, -maxTiltY, maxTiltY) / maxTiltY;
             const log = document.getElementById("log");
             if (log)
-                log.innerHTML = `ɑ=${alpha.toFixed(1)} β=${beta.toFixed(1)} γ=${gamma.toFixed(1)} x=${x.toFixed(2)} y=${y.toFixed(2)}<br>
-                mouxex=${me.mouseTargetX.toFixed(2)} mousey=${me.mouseTargetY.toFixed(2)}<br>
-                avgx=${averageX.toFixed(2)} varx=${varianceX.toFixed(2)} index=${index}<br>
-                avgy=${averageY.toFixed(2)} vary=${varianceY.toFixed(2)}`;
+                log.innerHTML = `ɑ=${toFixed2(alpha)} β=${toFixed2(beta)} γ=${toFixed2(gamma)} x=${toFixed2(x)} y=${toFixed2(y)}<br>
+                mouxex=${toFixed2(me.mouseTargetX)} mousey=${toFixed2(me.mouseTargetY)}<br>
+                avgx=${toFixed2(averageX)} varx=${toFixed2(varianceX)} index=${index}<br>
+                avgy=${toFixed2(averageY)} vary=${toFixed2(varianceY)}`;
         }
         // Handle security on iOS 13+ devices
         const root = document.getElementById("root");
@@ -335,6 +335,10 @@ const calculateVariance = (values, average) => {
     });
     const variance = calculateMean(squareDiffs);
     return variance;
+};
+const toFixed2 = (numba) => {
+    const fixed = numba.toFixed(2);
+    return (fixed[0] == "-" ? fixed : "+" + fixed);
 };
 new Fake3D("gl");
 //# sourceMappingURL=index.js.map
