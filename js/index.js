@@ -178,8 +178,8 @@ class Fake3D {
                 beta0 = averageX;
             if (varianceY < 0.05)
                 gamma0 = averageY;
-            const maxTiltX = 6;
-            const maxTiltY = 8;
+            const maxTiltX = 15;
+            const maxTiltY = 15;
             const x = beta - beta0;
             const y = gamma - gamma0;
             me.mouseTargetX = clamp(x, -maxTiltX, maxTiltX) / maxTiltX;
@@ -231,8 +231,8 @@ class Fake3D {
         let currentTime = (now - this.startTime) / 1000;
         this.uTime.set(currentTime);
         // inertia
-        let x = this.mouseX += (this.mouseTargetX - this.mouseX) * 0.25;
-        let y = this.mouseY += (this.mouseTargetY - this.mouseY) * 0.25;
+        let x = this.mouseX += (this.mouseTargetX - this.mouseX) * 0.2;
+        let y = this.mouseY += (this.mouseTargetY - this.mouseY) * 0.2;
         const radius = Math.sqrt((x * x) + (y * y));
         if (radius > 0.99) {
             x = x / radius;
