@@ -218,20 +218,20 @@ class Fake3D {
         window.addEventListener('deviceorientation', handleOrientation);
         function handleOrientation(event: any) {
             //console.log("gyro")
-            if (gamma0 == undefined) {
-                gamma0 = event.gamma;
-            }
 
             const alpha = event.alpha;
             const beta = event.beta;
-            const gamma = event.gamma - gamma0!;
+            const gamma = event.gamma;
+
+            if (gamma0 == undefined)
+                gamma0 = gamma;
 
             const maxTilt = 15;
-            const y = gamma;
             const x = beta;
+            const y = gamma - gamma0!;
 
-            me.mouseTargetY = clamp(x, -maxTilt, maxTilt) / maxTilt;
-            me.mouseTargetX = -clamp(y, -maxTilt, maxTilt) / maxTilt;
+            me.mouseTargetX = -clamp(x, -maxTilt, maxTilt) / maxTilt;
+            me.mouseTargetY = clamp(y, -maxTilt, maxTilt) / maxTilt;
         }
 
         // Handle security on iOS 13+ devices
