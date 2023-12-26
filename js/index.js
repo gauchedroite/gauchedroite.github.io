@@ -219,8 +219,8 @@ class Fake3D {
         let currentTime = (now - this.startTime) / 1000;
         this.uTime.set(currentTime);
         // inertia
-        this.mouseX += (this.mouseTargetX - this.mouseX) * 0.5;
-        this.mouseY += (this.mouseTargetY - this.mouseY) * 0.5;
+        this.mouseX += (this.mouseTargetX - this.mouseX) * 0.9;
+        this.mouseY += (this.mouseTargetY - this.mouseY) * 0.9;
         this.uMouse.set(this.mouseX, this.mouseY);
         // render
         this.billboard.render(this.gl);
