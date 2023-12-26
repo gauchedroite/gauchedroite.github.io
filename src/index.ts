@@ -216,7 +216,7 @@ class Fake3D {
         let currentgamma0: number | null = null;
         let granted = false;
         let index = 0;
-        const SIZE = 30
+        const SIZE = 25
         const xs: number[] = new Array(SIZE).fill(0)
         const ys: number[] = new Array(SIZE).fill(0)
 
@@ -252,14 +252,14 @@ class Fake3D {
             if (currentgamma0 == null) currentgamma0 = gamma0;
 
             // inertia
-            currentbeta0 += (beta0 - currentbeta0) * 0.05
-            currentgamma0 += (gamma0 - currentgamma0) * 0.05
+            currentbeta0 += (beta0 - currentbeta0) * 0.1
+            currentgamma0 += (gamma0 - currentgamma0) * 0.1
 
             const x = beta - currentbeta0!;
             const y = gamma - currentgamma0!;
 
-            const maxTiltX = 15;
-            const maxTiltY = 15;
+            const maxTiltX = 12;
+            const maxTiltY = 12;
             me.mouseTargetX = clamp(x, -maxTiltX, maxTiltX) / maxTiltX;
             me.mouseTargetY = -clamp(y, -maxTiltY, maxTiltY) / maxTiltY;
 
