@@ -289,10 +289,17 @@ class Fake3D {
         this.uTime.set(currentTime);
 
         // inertia
-        this.mouseX += (this.mouseTargetX - this.mouseX) * 0.9;
-        this.mouseY += (this.mouseTargetY - this.mouseY) * 0.9;
+        let x = this.mouseX += (this.mouseTargetX - this.mouseX) * 0.75;
+        let y = this.mouseY += (this.mouseTargetY - this.mouseY) * 0.75;
 
-        this.uMouse.set(this.mouseX, this.mouseY);
+        const radius = Math.sqrt((x * x) + (y * y));
+        if (radius > 0.99) {
+            x = x / radius;
+            y = y / radius;
+            //console.log(Math.sqrt((x * x) + (y * y)))
+        }
+
+        this.uMouse.set(x, y);
 
         // render
         this.billboard.render(this.gl);
