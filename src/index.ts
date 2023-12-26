@@ -217,7 +217,9 @@ class Fake3D {
 
         window.addEventListener('deviceorientation', handleOrientation);
         function handleOrientation(event: any) {
-            //console.log("gyro")
+
+            if (event == undefined || event.alpha == undefined || event.beta == undefined || event.gamma == undefined)
+                return
 
             const alpha: number = event.alpha;
             const beta: number = event.beta;
@@ -226,7 +228,7 @@ class Fake3D {
             if (gamma0 == undefined)
                 gamma0 = gamma;
 
-            const maxTilt = 15;
+            const maxTilt = 10;
             const x = beta;
             const y = gamma - gamma0!;
 

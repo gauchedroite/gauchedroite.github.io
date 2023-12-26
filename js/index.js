@@ -158,13 +158,14 @@ class Fake3D {
         let gamma0 = null;
         window.addEventListener('deviceorientation', handleOrientation);
         function handleOrientation(event) {
-            //console.log("gyro")
+            if (event == undefined || event.alpha == undefined || event.beta == undefined || event.gamma == undefined)
+                return;
             const alpha = event.alpha;
             const beta = event.beta;
             const gamma = event.gamma;
             if (gamma0 == undefined)
                 gamma0 = gamma;
-            const maxTilt = 15;
+            const maxTilt = 10;
             const x = beta;
             const y = gamma - gamma0;
             me.mouseTargetX = -clamp(x, -maxTilt, maxTilt) / maxTilt;
