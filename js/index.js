@@ -189,8 +189,8 @@ class Fake3D {
             if (currentgamma0 == null)
                 currentgamma0 = gamma0;
             // inertia
-            currentbeta0 += (beta0 - currentbeta0) * 0.1;
-            currentgamma0 += (gamma0 - currentgamma0) * 0.1;
+            currentbeta0 += (beta0 - currentbeta0) * 0.2;
+            currentgamma0 += (gamma0 - currentgamma0) * 0.2;
             const x = beta - currentbeta0;
             const y = gamma - currentgamma0;
             const maxTiltX = 12;
@@ -245,8 +245,8 @@ class Fake3D {
         let currentTime = (now - this.startTime) / 1000;
         this.uTime.set(currentTime);
         // inertia
-        let x = this.mouseX += (this.mouseTargetX - this.mouseX) * 0.85;
-        let y = this.mouseY += (this.mouseTargetY - this.mouseY) * 0.85;
+        let x = this.mouseX += (this.mouseTargetX - this.mouseX) * 0.9;
+        let y = this.mouseY += (this.mouseTargetY - this.mouseY) * 0.9;
         const radius = Math.sqrt((x * x) + (y * y));
         if (radius > 1) {
             x = x / radius;
