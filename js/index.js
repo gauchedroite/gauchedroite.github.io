@@ -169,8 +169,8 @@ class Fake3D {
                 gamma0 = gamma;
                 beta0 = beta;
             }
-            const maxTiltX = 6;
-            const maxTiltY = 10;
+            const maxTiltX = 10;
+            const maxTiltY = 15;
             const x = beta - beta0;
             const y = gamma - gamma0;
             me.mouseTargetX = -clamp(x, -maxTiltX, maxTiltX) / maxTiltX;
@@ -225,7 +225,6 @@ class Fake3D {
         if (radius > 0.99) {
             x = x / radius;
             y = y / radius;
-            //console.log(Math.sqrt((x * x) + (y * y)))
         }
         this.uMouse.set(x, y);
         // render
