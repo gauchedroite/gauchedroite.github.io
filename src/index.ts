@@ -317,7 +317,7 @@ class Fake3D {
 
         // inertia
         let x = this.mouseX += (this.mouseTargetX - this.mouseX) * 0.85;
-        let y = this.mouseY += (this.mouseTargetY - this.mouseY) * 0.05;
+        let y = this.mouseY += (this.mouseTargetY - this.mouseY) * 0.85;
 
         const radius = Math.sqrt((x * x) + (y * y));
         if (radius > 1) {
