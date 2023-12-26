@@ -176,8 +176,6 @@ class Fake3D {
             const varianceX = calculateVariance(xs, averageX);
             const averageY = calculateMean(ys);
             const varianceY = calculateVariance(ys, averageY);
-            // if (varianceX < 0.01) beta0 = averageX;
-            // if (varianceY < 0.01) gamma0 = averageY;
             if (varianceX < 0.01 && varianceY < 0.01) {
                 beta0 = averageX;
                 gamma0 = averageY;
@@ -195,8 +193,8 @@ class Fake3D {
             currentgamma0 += (gamma0 - currentgamma0) * 0.05;
             const x = beta - currentbeta0;
             const y = gamma - currentgamma0;
-            const maxTiltX = 10;
-            const maxTiltY = 8;
+            const maxTiltX = 12;
+            const maxTiltY = 12;
             me.mouseTargetX = clamp(x, -maxTiltX, maxTiltX) / maxTiltX;
             me.mouseTargetY = -clamp(y, -maxTiltY, maxTiltY) / maxTiltY;
             const log = document.getElementById("log");
