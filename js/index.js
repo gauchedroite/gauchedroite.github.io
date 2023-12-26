@@ -157,7 +157,7 @@ class Fake3D {
         let gamma0 = null;
         let granted = false;
         let index = 0;
-        const SIZE = 25;
+        const SIZE = 50;
         const xs = new Array(SIZE).fill(0);
         const ys = new Array(SIZE).fill(0);
         window.addEventListener('deviceorientation', handleOrientation);
@@ -236,8 +236,8 @@ class Fake3D {
         let currentTime = (now - this.startTime) / 1000;
         this.uTime.set(currentTime);
         // inertia
-        let x = this.mouseX += (this.mouseTargetX - this.mouseX) * 0.5;
-        let y = this.mouseY += (this.mouseTargetY - this.mouseY) * 0.5;
+        let x = this.mouseX += (this.mouseTargetX - this.mouseX) * 0.75;
+        let y = this.mouseY += (this.mouseTargetY - this.mouseY) * 0.75;
         const radius = Math.sqrt((x * x) + (y * y));
         if (radius > 0.99) {
             x = x / radius;
