@@ -160,6 +160,10 @@
 		<div id="data_form">
 			<table>
 				<tr>
+					<td>Image</td>
+					<td><div id="image_file" contenteditable="true"></div></td>
+				</tr>
+				<tr>
 					<td>Inertia</td>
 					<td><div id="inertia_number" contenteditable="true"></div></td>
 				</tr>
@@ -204,6 +208,7 @@
 		const fake3d = new Fake3D(options)
 		fake3d.magic(markup => realtime.innerHTML = markup);
 
+		document.getElementById("image_file").innerText = options.imageOriginal.replace("img/", "").replace(".jpg", "")
 		document.getElementById("inertia_number").innerText = options.inertia
 		document.getElementById("homeInertia_number").innerText = options.homeInertia
 		document.getElementById("gyroTilt_number").innerText = options.gyroTilt
@@ -222,11 +227,14 @@
 				const parts = source.id.split("_")
 				const id = parts[0]
 				const kind = parts[1]
-				let value
-				if (kind == "number") {}
-					value = +source.innerText;
 
-				fake3d.options[id] = value
+				if (kind == "number") {
+					fake3d.options[id] = +source.innerText
+				}
+				else if (kind == "file") {
+					fake3d.options.imageOriginal = `img/${source.innerText}.jpg`
+					fake3d.options.imageDepth = `img/${source.innerText}-map.jpg`
+				}
 			}
 		})
 
