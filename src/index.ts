@@ -39,7 +39,6 @@ void main() {
 type IFakeOptions = {
     glID: string
     rootID: string
-    logID: string
     imageOriginal: string
     imageDepth: string
     verticalThreshold: number
@@ -65,8 +64,6 @@ export default class Fake3D {
     mouseTargetY: number;
     imageOriginal: any;
     imageDepth: any;
-    vth: any;
-    hth: any;
     imageURLs: any[];
     textures: any[];
     startTime: number;
@@ -82,6 +79,7 @@ export default class Fake3D {
     positionLocation: any;
     maxTilt: number = 0;
     program: WebGLProgram | null = null;
+    logger: any;
 
     constructor(options: IFakeOptions) {
         this.options = {...<IFakeOptions>{
@@ -112,8 +110,6 @@ export default class Fake3D {
 
         this.imageOriginal = this.options.imageOriginal;
         this.imageDepth = this.options.imageDepth;
-        this.hth = this.options.horizontalThreshold;
-        this.vth = this.options.verticalThreshold;
 
         this.imageURLs = [
             this.imageOriginal,
@@ -124,7 +120,9 @@ export default class Fake3D {
         this.startTime = new Date().getTime();
     }
 
-    magic() {
+    magic(logger: any = null) {
+        this.logger = logger
+
         this.startTime = new Date().getTime();
 
         this.createScene();
@@ -165,7 +163,7 @@ export default class Fake3D {
         }
         this.uResolution.set(this.width, this.height, a1, a2);
         this.uRatio.set(1 / this.ratio);
-        this.uThreshold.set(this.hth, this.vth);
+        this.uThreshold.set(this.options.horizontalThreshold, this.options.verticalThreshold);
         this.gl.viewport(0, 0, this.width * this.ratio, this.height * this.ratio);
     }
 
@@ -252,11 +250,6 @@ export default class Fake3D {
         const xs: number[] = new Array(homeBufferSize).fill(0)
         const ys: number[] = new Array(homeBufferSize).fill(0)
 
-        const homeVariance = this.options.homeVariance;
-        const homeInertia = this.options.homeInertia;
-
-        const gyroTilt = this.options.gyroTilt;
-
         const me = this;
         window.addEventListener('deviceorientation', handleOrientation);
         function handleOrientation(event: any) {
@@ -278,7 +271,7 @@ export default class Fake3D {
             const averageY = calculateMean(ys)
             const varianceY = calculateVariance(ys, averageY)
 
-            if (varianceX < homeVariance && varianceY < homeVariance) {
+            if (varianceX < me.options.homeVariance && varianceY < me.options.homeVariance) {
                 beta0 = averageX;
                 gamma0 = averageY;
             }
@@ -290,23 +283,25 @@ export default class Fake3D {
             if (currentgamma0 == null) currentgamma0 = gamma0;
 
             // inertia
-            currentbeta0 += (beta0 - currentbeta0) * homeInertia;
-            currentgamma0 += (gamma0 - currentgamma0) * homeInertia;
+            currentbeta0 += (beta0 - currentbeta0) * me.options.homeInertia;
+            currentgamma0 += (gamma0 - currentgamma0) * me.options.homeInertia;
 
             const x = beta - currentbeta0!;
             const y = gamma - currentgamma0!;
 
-            const maxTiltX = gyroTilt;
-            const maxTiltY = gyroTilt;
+            const maxTiltX = me.options.gyroTilt;
+            const maxTiltY = me.options.gyroTilt;
             me.mouseTargetX = clamp(x, -maxTiltX, maxTiltX) / maxTiltX;
             me.mouseTargetY = -clamp(y, -maxTiltY, maxTiltY) / maxTiltY;
 
-            const logElement = document.getElementById(me.options.logID)
-            if (logElement)
-                logElement.innerHTML = `ɑ=${toFixed2(alpha)} β=${toFixed2(beta)} γ=${toFixed2(gamma)} x=${toFixed2(x)} y=${toFixed2(y)}<br>
+            if (me.logger) {
+                const markup = `ɑ=${toFixed2(alpha)} β=${toFixed2(beta)} γ=${toFixed2(gamma)} x=${toFixed2(x)} y=${toFixed2(y)}<br>
                 mouxex=${toFixed2(me.mouseTargetX)} mousey=${toFixed2(me.mouseTargetY)}<br>
                 avgx=${toFixed2(averageX)} varx=${toFixed2(varianceX)} index=${index}<br>
                 avgy=${toFixed2(averageY)} vary=${toFixed2(varianceY)}`;
+
+                me.logger(markup)
+            }
         }
 
         // Handle security on iOS 13+ devices
@@ -339,13 +334,13 @@ export default class Fake3D {
     }
 
     mouseMove() {
-        let that = this;
+        let me = this;
         document.addEventListener('mousemove', function (e) {
-            let halfX = that.windowWidth / 2;
-            let halfY = that.windowHeight / 2;
+            let halfX = me.windowWidth / 2;
+            let halfY = me.windowHeight / 2;
 
-            that.mouseTargetX = (halfX - e.clientX) / halfX;
-            that.mouseTargetY = (halfY - e.clientY) / halfY;
+            me.mouseTargetX = (halfX - e.clientX) / halfX;
+            me.mouseTargetY = (halfY - e.clientY) / halfY;
         });
     }
 
@@ -365,10 +360,22 @@ export default class Fake3D {
         }
 
         this.uMouse.set(x, y);
+        this.uThreshold.set(this.options.horizontalThreshold, this.options.verticalThreshold);
 
         // render
         this.billboard.render(this.gl);
         requestAnimationFrame(this.render.bind(this));
+    }
+
+    static fetchState() {
+        const storage = localStorage.getItem("fake3d_options")
+        if (storage)
+            return JSON.parse(storage) as IFakeOptions
+        return null
+    }
+
+    static saveState(options: IFakeOptions) {
+        localStorage.setItem("fake3d_options", JSON.stringify(options))
     }
 }
 

@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
     <style>
 		:root {
 			--bc: sandybrown;
@@ -34,6 +35,8 @@
 			grid-column: 4 / 6;
 			height: 100%;
 			width: 100%;
+
+			cursor: pointer;
 
 			display: grid;
 			grid-template-columns: repeat(3, 1fr);
@@ -97,18 +100,48 @@
 		#gl canvas {
 			display: block;
 		}
-	</style>
-	<style>
 		#log {
 			position: absolute;
 			left: 0;
 			top: 0;
-
+			font-family: 'Courier New', Courier, monospace;
+		}
+		#real_time {
 			background-color: lime;
 			padding: 0.25rem;
 			margin: 0.5rem;
+		}
+		#data_form {
+			background-color: orange;
+			padding: 0.25rem;
+			margin: 0.5rem;
 
-			font-family: 'Courier New', Courier, monospace;
+			width: 225px;
+
+			& table {
+				border-collapse: collapse;
+				width: 100%;
+			}
+
+			& td {
+				border: 1px solid black;
+			}
+
+			& td:first-child {
+				background-color: burlywood;
+				padding: 2px 6px;
+				text-align: right;
+			}
+
+			& td:nth-child(2) {
+				background-color: whitesmoke;
+				padding: 0 0 0 8px;
+				width: 40%;
+
+				& div {
+					font-family: 'Courier New', Courier, monospace;
+				}
+			}
 		}
 	</style>
 </head>
@@ -122,16 +155,44 @@
 		</div>
 	</div>
 
-	<div id="log"></div>
+	<div id="log">
+		<div id="real_time"></div>
+		<div id="data_form">
+			<table>
+				<tr>
+					<td>Inertia</td>
+					<td><div id="inertia_number" contenteditable="true"></div></td>
+				</tr>
+				<tr>
+					<td>Home Inertia</td>
+					<td><div id="homeInertia_number" contenteditable="true"></div></td>
+				</tr>
+				<tr>
+					<td>Gyro Tilt</td>
+					<td><div id="gyroTilt_number" contenteditable="true"></div></td>
+				</tr>
+				<tr>
+					<td>Hor. Threshold</td>
+					<td><div id="horizontalThreshold_number" contenteditable="true"></div></td>
+				</tr>
+				<tr>
+					<td>Vert. Threshold</td>
+					<td><div id="verticalThreshold_number" contenteditable="true"></div></td>
+				</tr>
+			</table>
+		</div>
+	</div>
 
 	<script type="module" src="./js/index.js"></script>
 	<script type="module">
-		import Fake3D from "./js/index.js";
+		import Fake3D from "./js/index.js"
 
-		let options = {
+		const realtime = document.getElementById("real_time")
+
+		const options = Fake3D.fetchState() ?? {
 			glID: "gl",
 			rootID: "root",
-			logID: null,
+			debugID: "log",
 			imageOriginal: "img/lady.jpg",
 			imageDepth: "img/lady-map.jpg",
 			horizontalThreshold: 25,
@@ -140,12 +201,33 @@
 			homeInertia: 0.15,
 		}
 
-		let fake3d = new Fake3D(options);
-		fake3d.magic();
+		const fake3d = new Fake3D(options)
+		fake3d.magic(markup => realtime.innerHTML = markup);
+
+		document.getElementById("inertia_number").innerText = options.inertia
+		document.getElementById("homeInertia_number").innerText = options.homeInertia
+		document.getElementById("gyroTilt_number").innerText = options.gyroTilt
+		document.getElementById("horizontalThreshold_number").innerText = options.horizontalThreshold
+		document.getElementById("verticalThreshold_number").innerText = options.verticalThreshold
 
 		const billy = document.getElementById("billy")
 		billy.addEventListener("click", () => {
-			//fake3d
+			Fake3D.saveState(fake3d.options)
+			location.reload()
+		})
+
+		document.getElementById("data_form").addEventListener("input", (event) => {
+			const source = event.srcElement
+			if (source.id) {
+				const parts = source.id.split("_")
+				const id = parts[0]
+				const kind = parts[1]
+				let value
+				if (kind == "number") {}
+					value = +source.innerText;
+
+				fake3d.options[id] = value
+			}
 		})
 
 	</script>
