@@ -111,6 +111,7 @@ export default class Fake3D {
         this.imageOriginal = this.options.imageOriginal;
         this.imageDepth = this.options.imageDepth;
 
+        // See https://huggingface.co/spaces/shariqfarooq/ZoeDepth to create a depth map
         this.imageURLs = [
             this.imageOriginal,
             this.imageDepth

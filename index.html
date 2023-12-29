@@ -104,12 +104,12 @@
 			position: absolute;
 			left: 0;
 			top: 0;
-			font-family: 'Courier New', Courier, monospace;
 		}
 		#real_time {
 			background-color: lime;
 			padding: 0.25rem;
 			margin: 0.5rem;
+			font-family: 'Courier New', Courier, monospace;
 		}
 		#data_form {
 			background-color: orange;
@@ -197,10 +197,10 @@
 			glID: "gl",
 			rootID: "root",
 			debugID: "log",
-			imageOriginal: "img/lady.jpg",
-			imageDepth: "img/lady-map.jpg",
-			horizontalThreshold: 25,
-			verticalThreshold: 12,
+			imageOriginal: "img/lady2.jpg",
+			imageDepth: "img/lady2-map.jpg",
+			horizontalThreshold: 150,
+			verticalThreshold: 65,
 			inertia: 0.95,
 			homeInertia: 0.15,
 		}
@@ -214,12 +214,6 @@
 		document.getElementById("gyroTilt_number").innerText = options.gyroTilt
 		document.getElementById("horizontalThreshold_number").innerText = options.horizontalThreshold
 		document.getElementById("verticalThreshold_number").innerText = options.verticalThreshold
-
-		const billy = document.getElementById("billy")
-		billy.addEventListener("click", () => {
-			Fake3D.saveState(fake3d.options)
-			location.reload()
-		})
 
 		document.getElementById("data_form").addEventListener("input", (event) => {
 			const source = event.srcElement
@@ -236,6 +230,12 @@
 					fake3d.options.imageDepth = `img/${source.innerText}-map.jpg`
 				}
 			}
+		})
+
+		const billy = document.getElementById("billy")
+		billy.addEventListener("click", () => {
+			Fake3D.saveState(fake3d.options)
+			location.reload()
 		})
 
 	</script>
