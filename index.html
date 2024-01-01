@@ -150,7 +150,7 @@
 
 	<div id="root" class="parent" style="position:absolute; width:100vw; height:100vh;">
 		<div id="billy" class="child">
-			<div class="left"><img src="img/geai-bleu-500x500.jpg" alt="Billy"></div>
+			<div class="left"><img src="assets/geai-bleu-500x500.jpg" alt="Billy"></div>
 			<div class="right">Mon ami<br>Billy</div>
 		</div>
 	</div>
@@ -187,6 +187,11 @@
 		</div>
 	</div>
 
+	<!-- https://www.bensound.com/free-music-for-videos -->
+	<audio id="menu_audio" loop autoplay name="media" class="solid">
+        <source src="./assets/ukulele.mp3" type="audio/mpeg">
+    </audio>
+
 	<script type="module" src="./js/index.js"></script>
 	<script type="module">
 		import Fake3D from "./js/index.js"
@@ -197,8 +202,8 @@
 			glID: "gl",
 			rootID: "root",
 			debugID: "log",
-			imageOriginal: "img/lady2.jpg",
-			imageDepth: "img/lady2-map.jpg",
+			imageOriginal: "assets/lady2.jpg",
+			imageDepth: "assets/lady2-map.jpg",
 			horizontalThreshold: 150,
 			verticalThreshold: 65,
 			inertia: 0.95,
@@ -208,7 +213,7 @@
 		const fake3d = new Fake3D(options)
 		fake3d.magic(markup => realtime.innerHTML = markup);
 
-		document.getElementById("image_file").innerText = options.imageOriginal.replace("img/", "").replace(".jpg", "")
+		document.getElementById("image_file").innerText = options.imageOriginal.replace("assets/", "").replace(".jpg", "")
 		document.getElementById("inertia_number").innerText = options.inertia
 		document.getElementById("homeInertia_number").innerText = options.homeInertia
 		document.getElementById("gyroTilt_number").innerText = options.gyroTilt
@@ -226,8 +231,8 @@
 					fake3d.options[id] = +source.innerText
 				}
 				else if (kind == "file") {
-					fake3d.options.imageOriginal = `img/${source.innerText}.jpg`
-					fake3d.options.imageDepth = `img/${source.innerText}-map.jpg`
+					fake3d.options.imageOriginal = `assets/${source.innerText}.jpg`
+					fake3d.options.imageDepth = `assets/${source.innerText}-map.jpg`
 				}
 			}
 		})
